@@ -4,7 +4,7 @@
   <title><![CDATA[Category: misc | As a SW/Ops/DB Engingeer]]></title>
   <link href="http://riywotech.github.io/blog/categories/misc/atom.xml" rel="self"/>
   <link href="http://riywotech.github.io/"/>
-  <updated>2013-04-16T23:28:09-07:00</updated>
+  <updated>2013-04-16T23:31:14-07:00</updated>
   <id>http://riywotech.github.io/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -23,6 +23,9 @@
 <p><a href="http://sunaot.tumblr.com/post/48053101279/4">4 月にエンジニアとなった人たちに知っておいてもらいたいこと</a></p>
 
 <p>というわけで、「そうだ、ブログを書こう」となりました。メインのブログの方で書いてもいいんですが、なんとなく技術寄りのものは別にまとめてみたいなぁと思って、最近流行りのOctopress+Github Pagesで作ってみました。このブログの作り方を共有するところからまずは出発しようかと思います。</p>
+
+<!-- more -->
+
 
 <p>とは言っても、ドキュメントがよくできてるので特に解説することはありませんでした。。。</p>
 
