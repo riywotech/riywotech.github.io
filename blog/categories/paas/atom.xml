@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[As a SW/Ops/DB Engineer]]></title>
-  <link href="http://tech.riywo.com/atom.xml" rel="self"/>
+  <title><![CDATA[Category: PaaS | As a SW/Ops/DB Engineer]]></title>
+  <link href="http://tech.riywo.com/blog/categories/paas/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
   <updated>2013-04-17T07:43:23-07:00</updated>
   <id>http://tech.riywo.com/</id>
@@ -109,107 +109,6 @@
 <p>問題はこれが所詮POCで、こういうことを実際にやるモチベーションは特にないので、机上の空論感がとても強いこと。多少の環境の差異はなんとなく乗りきれちゃったりするしそもそも完璧に管理する必要ないことが多い。もしくは寿命ギリギリまで環境を出来る限り変えずにやり過ごすのが一番簡単なやり方なので、今頑張る必要なくて、そしてずっと頑張る必要がないような話題だったりもします。この辺はサービスのライフサイクルとかも絡めて話をしたいところです。</p>
 
 <p>ただ夢を見続けることはした方がいいのかなと思うのと、そもそもその夢間違ってるよってのも言って欲しくてとりあえず書きなぐっておきました。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Tech Blog始めました&ブログの始め方]]></title>
-    <link href="http://tech.riywo.com/blog/2013/04/16/test-entry/"/>
-    <updated>2013-04-16T22:51:00-07:00</updated>
-    <id>http://tech.riywo.com/blog/2013/04/16/test-entry</id>
-    <content type="html"><![CDATA[<p>このエントリを読んで、そういえば最近全くアウトプットができていないことにはたと気づきました。@sunaot++</p>
-
-<p><a href="http://sunaot.tumblr.com/post/48053101279/4">4 月にエンジニアとなった人たちに知っておいてもらいたいこと</a></p>
-
-<p>というわけで、「そうだ、ブログを書こう」となりました。メインのブログの方で書いてもいいんですが、なんとなく技術寄りのものは別にまとめてみたいなぁと思って、最近流行りのOctopress+Github Pagesで作ってみました。このブログの作り方を共有するところからまずは出発しようかと思います。</p>
-
-<ul>
-<li><a href="http://tech.riywo.com/">As a SW/Ops/DB Engineer</a></li>
-</ul>
-
-
-<!-- more -->
-
-
-<p>とは言っても、ドキュメントがよくできてるので特に解説することはありませんでした。。。</p>
-
-<ul>
-<li>参考サイト
-
-<ul>
-<li><a href="http://octopress.org/docs/">Octopress Documentation - Octopress</a></li>
-<li><a href="https://help.github.com/categories/20/articles">GitHub Help</a></li>
-<li><a href="http://www.miukoba.net/blog/2013/01/05/start-octopress/">Octopressはじめました - mimemo</a></li>
-</ul>
-</li>
-</ul>
-
-
-<h2>local setup</h2>
-
-<ul>
-<li><a href="http://octopress.org/docs/setup/">Octopress Setup - Octopress</a></li>
-</ul>
-
-
-<p>まずはこれに従ってローカルにファイルを落とす。rbenv使ってて、<code>.rbenv-version</code>のが入って無かったので<code>rbenv local</code>で適当に自分の持ってるバージョンを指定。<code>bundle</code>はいつも通り<code>bundle install --path vendor/bundle --binstubs</code>。<code>--binstubs</code>用に<code>.bash_profile</code>とかで<code>export PATH="./bin:$PATH"</code>してます。</p>
-
-<p><code>rake install</code>したら次へ。</p>
-
-<h2>github setup</h2>
-
-<ul>
-<li><a href="http://octopress.org/docs/deploying/github/">Deploying to Github Pages - Octopress</a></li>
-</ul>
-
-
-<p>githubにはpagesという静的コンテンツ配信をしてくれる仕組みがあります。これを利用してかつカスタムドメインで自分のドメインを使います(github.com=>github.ioに勝手にドメインが変えられたりするので、パーマリンク厨的には自分のドメインで配信したいのです)。</p>
-
-<p>ところが、github pagesのカスタムドメインは<strong>1ユーザ</strong>につき1つしか設定できないので、プロジェクト毎のページのリンクはusername.github.io/projectになってしまいます。僕は既に別のサイトを自分のgithub pagesで配信してるのでさて困った。</p>
-
-<p>というわけでorganizationを使います。organizationのメインgithub pagesにもカスタムドメインが設定できるからですね。publicなレポジトリであればorganizationを作るのは無料なのでこのブログ専用のorganizationを作りました。</p>
-
-<p>そうしたら、ブログ用のレポジトリを作ります。名前は必ず<code>organame.github.io</code>になります。もちろんpublic。</p>
-
-<p>作ったら<code>git@github.com</code>で始まるパスをコピーしておいて、おもむろに<code>rake setup_github_pages</code>を実行。URLを聞かれたらさっきのを入力。あとは<code>rake generate</code>, <code>rake deploy</code>したら、<code>http://organame.github.io</code>でもう見れるはず。github++</p>
-
-<h3>custom domain</h3>
-
-<ul>
-<li><a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">Setting up a custom domain with Pages · GitHub Help</a></li>
-</ul>
-
-
-<p>カスタムドメインもそんなに難しくない。上記の通り、TLDならAレコード、それ以外ならCNAMEを設定。あとは、<code>echo orgname.example.com &gt;&gt; source/CNAME</code>として、先ほどの<code>rake</code>を再実行すれば終わり。</p>
-
-<h2>source repo</h2>
-
-<p>さて、先ほど<code>orgname.gihub.io</code>にpushされたのはOctopressによって生成された静的コンテンツなわけですが、それらの元になっているファイルも当然githubで管理したくなります。</p>
-
-<p>別にpublicで良ければOctopressの手順通り、<code>git push origin source</code>とすれば、先ほどのorganizationのレポジトリに<code>source</code>ブランチができて完了です。</p>
-
-<p>僕はなんとなくsourceはprivateにしたかったのでちょっと変なやりかたをしました。自分のユーザ配下にprivateレポジトリを作成して、そこに向けてpushするようにします。多分こんな感じでいけるはず。</p>
-
-<pre><code>$ git remote add private PRIVATE_REPO_URL 
-$ git config branch.source.remote private
-$ git push -u private source
-</code></pre>
-
-<p>これで<code>git push</code>すればsourceはprivateの方にいきます。</p>
-
-<h2>configuration</h2>
-
-<p><code>_config.yml</code>を見ながら適当に編集。そのうち頑張る。</p>
-
-<h2>first post</h2>
-
-<p>あとはエントリを書くだけ。<code>rake new_post['post title']</code></p>
-
-<p>とりあえずMouを試用してます。ただ、<code>rake preview</code>としておけばローカルにサーバ立ててくれてリアルタイムに反映されるので、リロードするだけでプレビューできるので要らないかも。</p>
-
-<h1>おわりに</h1>
-
-<p>今日は日本人のハッカーの方達と晩御飯食べましたが、みなさんかっこよくてちょっとでも近づけるように頑張ろうと思えて、とても元気出ました。このブログが誰かの何かの役に立てば幸いです。たまに日本語だったりたまに英語だったりすると思います。書きやすさとその日の気分重視。</p>
 ]]></content>
   </entry>
   
