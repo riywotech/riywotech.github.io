@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[As a Software/Operation/Database Engingeer]]></title>
   <link href="http://riywotech.github.io/atom.xml" rel="self"/>
   <link href="http://riywotech.github.io/"/>
-  <updated>2013-04-16T18:26:58-07:00</updated>
+  <updated>2013-04-16T22:38:18-07:00</updated>
   <id>http://riywotech.github.io/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[riywo]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
