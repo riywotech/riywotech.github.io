@@ -4,7 +4,7 @@
   <title><![CDATA[Category: misc | As a SW/Ops/DB Engingeer]]></title>
   <link href="http://riywotech.github.io/blog/categories/misc/atom.xml" rel="self"/>
   <link href="http://riywotech.github.io/"/>
-  <updated>2013-04-16T23:26:33-07:00</updated>
+  <updated>2013-04-16T23:28:09-07:00</updated>
   <id>http://riywotech.github.io/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -38,7 +38,7 @@
 </ul>
 
 
-<h3>local setup</h3>
+<h2>local setup</h2>
 
 <ul>
 <li><a href="http://octopress.org/docs/setup/">Octopress Setup - Octopress</a></li>
@@ -49,7 +49,7 @@
 
 <p><code>rake install</code>したら次へ。</p>
 
-<h3>github setup</h3>
+<h2>github setup</h2>
 
 <ul>
 <li><a href="http://octopress.org/docs/deploying/github/">Deploying to Github Pages - Octopress</a></li>
@@ -66,16 +66,16 @@
 
 <p>作ったら<code>git@github.com</code>で始まるパスをコピーしておいて、おもむろに<code>rake setup_github_pages</code>を実行。URLを聞かれたらさっきのを入力。あとは<code>rake generate</code>, <code>rake deploy</code>したら、<code>http://organame.github.io</code>でもう見れるはず。github++</p>
 
-<h4>custom domain</h4>
+<h3>custom domain</h3>
 
 <ul>
 <li><a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">Setting up a custom domain with Pages · GitHub Help</a></li>
 </ul>
 
 
-<p>カスタムドメインもそんなに難しない。上記の通り、TLDならAレコード、それ以外ならCNAMEを設定。あとは、<code>echo orgname.example.com &gt;&gt; source/CNAME</code>として、先ほどの<code>rake</code>を再実行すれば終わり。</p>
+<p>カスタムドメインもそんなに難しくない。上記の通り、TLDならAレコード、それ以外ならCNAMEを設定。あとは、<code>echo orgname.example.com &gt;&gt; source/CNAME</code>として、先ほどの<code>rake</code>を再実行すれば終わり。</p>
 
-<h3>source repo</h3>
+<h2>source repo</h2>
 
 <p>さて、先ほど<code>orgname.gihub.io</code>にpushされたのはOctopressによって生成された静的コンテンツなわけですが、それらの元になっているファイルも当然githubで管理したくなります。</p>
 
@@ -90,17 +90,17 @@ $ git push -u private source
 
 <p>これで<code>git push</code>すればsourceはprivateの方にいきます。</p>
 
-<h3>configuration</h3>
+<h2>configuration</h2>
 
 <p><code>_config.yml</code>を見ながら適当に編集。そのうち頑張る。</p>
 
-<h3>first post</h3>
+<h2>first post</h2>
 
 <p>あとはエントリを書くだけ。<code>rake new_post['post title']</code></p>
 
 <p>とりあえずMouを試用してます。ただ、<code>rake preview</code>としておけばローカルにサーバ立ててくれてリアルタイムに反映されるので、リロードするだけでプレビューできるので要らないかも。</p>
 
-<h2>おわりに</h2>
+<h1>おわりに</h1>
 
 <p>今日は日本人のハッカーの方達と晩御飯食べましたが、みなさんかっこよくてちょっとでも近づけるように頑張ろうと思えて、とても元気出ました。このブログが誰かの何かの役に立てば幸いです。たまに日本語だったりたまに英語だったりすると思います。書きやすさとその日の気分重視。</p>
 ]]></content>
