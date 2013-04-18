@@ -99,6 +99,8 @@
 <h3>Perl</h3>
 
 <pre><code>my ($a, $b) = ("a:1 b:2" =~ /a:(\d) b:(\d)/);
+# or
+my ($a, $b) = "a:1 b:2" =~ /a:(\d) b:(\d)/;
 </code></pre>
 
 <h3>Ruby</h3>
@@ -121,7 +123,12 @@ a, b = re.match(r'a:(\d) b:(\d)', "a:1 b:2").group(1, 2)
 
 <ul>
 <li>simplest</li>
-<li>needs parentheses</li>
+<li>needs parentheses for multiple assignment
+
+<ul>
+<li>parentheses for matching are not mandatory, though</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>Ruby
