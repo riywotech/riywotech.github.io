@@ -4,7 +4,7 @@
   <title><![CDATA[As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-04-17T18:51:36-07:00</updated>
+  <updated>2013-04-17T18:54:51-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -54,7 +54,7 @@ a, b = re.match(r'a:(\d) b:(\d)', "a:1 b:2").group(1, 2)
 <li>Ruby
 
 <ul>
-<li>match is a method of <code>String</code> class</li>
+<li><code>match</code> is a method of <code>String</code> class</li>
 <li>give a block or slice an array</li>
 </ul>
 </li>
@@ -62,7 +62,7 @@ a, b = re.match(r'a:(\d) b:(\d)', "a:1 b:2").group(1, 2)
 
 <ul>
 <li>needs <code>re</code> module</li>
-<li>match is a method of <code>re</code></li>
+<li><code>match</code> is a method of <code>re</code></li>
 </ul>
 </li>
 </ul>
