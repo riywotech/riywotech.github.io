@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: PaaS - As a SW/Ops/DB Engineer</title>
+  <title>multiple assignment from regexp - As a SW/Ops/DB Engineer</title>
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="Category: PaaS">
+  <meta name="description" content="Sometimes I want to assign multiple variables from results of regexp matching. Here are the ways in some LLs. Perl my ($a, $b) = ("a:1 b:2" =~ /a:(\d &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tech.riywo.comblog/categories/paas">
+  <link rel="canonical" href="http://tech.riywo.com/blog/2013/04/17/multiple-assignment-from-regexp">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="As a SW/Ops/DB Engineer" type="application/atom+xml">
@@ -64,36 +64,159 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: PaaS</h1>
+    
+      <h1 class="entry-title">Multiple Assignment From Regexp</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-17T18:22:00-07:00" pubdate data-updated="true">Apr 17<span>th</span>, 2013</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content"><p>Sometimes I want to assign multiple variables from results of regexp matching. Here are the ways in some LLs.</p>
 
-  
-  <h2>2013</h2>
-
-<article>
-  
-<h1><a href="/blog/2013/04/17/awesome-docker/">Awesome Docker!そして環境管理について思うところ</a></h1>
-<time datetime="2013-04-17T01:16:00-07:00" pubdate><span class='month'>Apr</span> <span class='day'>17</span> <span class='year'>2013</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/paas/'>PaaS</a>, <a class='category' href='/blog/categories/linux/'>linux</a></span>
-</footer>
+<!-- more -->
 
 
-</article>
+<h3>Perl</h3>
+
+<pre><code>my ($a, $b) = ("a:1 b:2" =~ /a:(\d) b:(\d)/);
+</code></pre>
+
+<h3>Ruby</h3>
+
+<pre><code>a, b = "a:1 b:2".match(/a:(\d) b:(\d)/) {[$1, $2]}
+# or
+a, b = "a:1 b:2".match(/a:(\d) b:(\d)/).to_a[1, 2]
+</code></pre>
+
+<h3>Python</h3>
+
+<pre><code>import re
+a, b = re.match(r'a:(\d) b:(\d)', "a:1 b:2").group(1, 2)
+</code></pre>
+
+<h2>Conclusion</h2>
+
+<ul>
+<li>Perl
+
+<ul>
+<li>simplest</li>
+<li>needs parentheses</li>
+</ul>
+</li>
+<li>Ruby
+
+<ul>
+<li>match is a method of <code>String</code> class</li>
+<li>give a block or slice an array</li>
+</ul>
+</li>
+<li>Python
+
+<ul>
+<li>needs <code>re</code> module</li>
+<li>match is a method of <code>re</code></li>
+</ul>
+</li>
+</ul>
+
+
+<p>Enjoy!</p>
+
+<hr />
+
+<p>簡単にファイルをパースしたい時とかに、Perlで書いた正規表現でさくっと変数に多重代入したりしてたんですが、Ruby/Pythonだとどうやるのか分からなかったのでまとめ。Thanks to @_shimada, @methane, @kyoendo</p>
+
+<p>namedcapture版も作ってみたい。というかそもそもオレオレLL比較チートシート作りたい。</p>
+
+<ul>
+<li>参考
+
+<ul>
+<li><a href="http://0xcc.net/blog/archives/000137.html">文字列操作の比較表: Ruby, Python, JavaScript, Perl, C++ - bkブログ</a></li>
+</ul>
+</li>
+</ul>
 
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">riywo</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-17T18:22:00-07:00" pubdate data-updated="true">Apr 17<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/perl/'>perl</a>, <a class='category' href='/blog/categories/python/'>python</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tech.riywo.com/blog/2013/04/17/multiple-assignment-from-regexp/" data-via="riywo" data-counturl="http://tech.riywo.com/blog/2013/04/17/multiple-assignment-from-regexp/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/04/17/awesome-docker/" title="Previous Post: Awesome Docker!そして環境管理について思うところ">&laquo; Awesome Docker!そして環境管理について思うところ</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -169,7 +292,10 @@
       var disqus_shortname = 'riywotech';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://tech.riywo.com/blog/2013/04/17/multiple-assignment-from-regexp/';
+        var disqus_url = 'http://tech.riywo.com/blog/2013/04/17/multiple-assignment-from-regexp/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
