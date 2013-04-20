@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: test | As a SW/Ops/DB Engineer]]></title>
+  <link href="http://tech.riywo.com/blog/categories/test/atom.xml" rel="self"/>
+  <link href="http://tech.riywo.com/"/>
+  <updated>2013-04-19T21:07:30-07:00</updated>
+  <id>http://tech.riywo.com/</id>
+  <author>
+    <name><![CDATA[riywo]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[python mox example]]></title>
+    <link href="http://tech.riywo.com/blog/2013/04/19/python-mox-example/"/>
+    <updated>2013-04-19T19:55:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/04/19/python-mox-example</id>
+    <content type="html"><![CDATA[<p>Pythonの小さいスクリプトを書いたんですが、せっかくなんでテストも書いてみようと思ってあがいたメモ。やりたかったのは、スクリプトの中で行ってるIO(ファイルとIPC)をテスト中は上書きして、テストデータを返す、みたいなこと。</p>
+
+<!-- more -->
+
+
+<p>初めは<code>mock</code>というのでやってたんですが、<code>subprocess.Popen()</code>がさらにメソッドを呼び出す形で使うのでどうやってやったらいいのか分からなくて、<code>mox</code>を使ってとりあえずできたのでそれを記録。</p>
+
+<p><code>Example.run()</code>は、ファイルを読み込んだ内容とコマンド実行結果をつなげて返すだけ。</p>
+
+<script src="https://gist.github.com/riywo/5424458.js"></script>
+
+
+<p>もっとスマートなやり方やオススメもモジュールがあればぜひ教えてくださいませ〜</p>
+
+<p>cf. <a href="http://stackoverflow.com/questions/5237693/mocking-openfile-name-in-unit-tests">python - Mocking open(file_name) in unit tests - Stack Overflow</a></p>
+]]></content>
+  </entry>
+  
+</feed>
