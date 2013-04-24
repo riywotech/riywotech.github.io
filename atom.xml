@@ -4,7 +4,7 @@
   <title><![CDATA[As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-04-23T19:13:12-07:00</updated>
+  <updated>2013-04-23T19:14:08-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -20,7 +20,7 @@
     <id>http://tech.riywo.com/blog/2013/04/23/webtail-plus-ncat-equals-simple-log-monitoring-slash</id>
     <content type="html"><![CDATA[<p><a href="https://github.com/r7kamura/webtail">webtail</a> is a super simple log monitoring tool. You can monitor a log streaming on a server via your web browser.</p>
 
-<p>I want to monitor multi servers log, so I tried <code>ncat</code> in <code>nmap</code>. <code>ncat</code> supports multi sessions.</p>
+<p>I wanted to monitor multi servers log, so I tried <code>ncat</code> in <code>mmap</code>. <code>ncat</code> supports multi sessions.</p>
 
 <ul>
 <li><a href="http://nmap.org/ncat/">Ncat - Netcat for the 21st Century</a></li>
