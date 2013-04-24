@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ruby | As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-04-23T19:10:38-07:00</updated>
+  <updated>2013-04-23T19:13:12-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -33,7 +33,7 @@
 <p>Here is an example.</p>
 
 <pre><code>## monitor server
-mon&gt; ncat -l -k -p 10000 | webtail
+mon&gt; ncat -l -k 10000 | webtail
 
 ## web servers
 web1&gt; tail -F access_log | sed -e 's/^/web1 /' | nc mon 10000

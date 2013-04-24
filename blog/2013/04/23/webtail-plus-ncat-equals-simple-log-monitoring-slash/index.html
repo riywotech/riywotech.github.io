@@ -106,7 +106,7 @@
 <p>Here is an example.</p>
 
 <pre><code>## monitor server
-mon&gt; ncat -l -k -p 10000 | webtail
+mon&gt; ncat -l -k 10000 | webtail
 
 ## web servers
 web1&gt; tail -F access_log | sed -e 's/^/web1 /' | nc mon 10000
