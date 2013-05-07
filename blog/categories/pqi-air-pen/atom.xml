@@ -4,7 +4,7 @@
   <title><![CDATA[Category: pqi-air-pen | As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/blog/categories/pqi-air-pen/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-05-07T08:26:08-07:00</updated>
+  <updated>2013-05-07T08:32:01-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -18,7 +18,7 @@
     <link href="http://tech.riywo.com/blog/2013/05/07/mruby-on-mips-in-pqi-air-pen/"/>
     <updated>2013-05-07T07:40:00-07:00</updated>
     <id>http://tech.riywo.com/blog/2013/05/07/mruby-on-mips-in-pqi-air-pen</id>
-    <content type="html"><![CDATA[<p>@moyashi さんの記事を読んで以来、ずっと欲しかったPQI Airシリーズなんですが、USのAmazonでは売ってなかったり無駄に高かったりして二の足を踏んでました。ある日、郵便局を使うと数百円で荷物が送れることが分かったので、日本のAmazonで買って実家に発送して送ってもらうことでついにゲットしました。</p>
+    <content type="html"><![CDATA[<p>moyashi さんの記事を読んで以来、ずっと欲しかったPQI Airシリーズなんですが、USのAmazonでは売ってなかったり無駄に高かったりして二の足を踏んでました。ある日、郵便局を使うと数百円で荷物が送れることが分かったので、日本のAmazonで買って実家に発送して送ってもらうことでついにゲットしました。</p>
 
 <ul>
 <li><a href="http://hitoriblog.com/?p=12627">ひとりぶろぐ » デジカメ内部でRubyを動かす狂気！無線LAN内蔵SDカードアダプタPQI Air Cardの間違った使い方</a></li>
@@ -54,7 +54,7 @@ VCEI exceptions         : not available
 
 <p>さすがにここでコンパイルするのは、その環境を準備するところで挫折しそうなのでクロスコンパイル(別のアーキテクチャ用のバイナリをコンパイルする)をしました。</p>
 
-<p>やり方は@moyashiさんが紹介されているSourcery CodeBenchというツールチェインを使って静的リンクでコンパイルしただけです。楽チン。</p>
+<p>やり方はmoyashiさんが紹介されているSourcery CodeBenchというツールチェインを使って静的リンクでコンパイルしただけです。楽チン。</p>
 
 <ul>
 <li><a href="http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/editions/lite-edition/">Sourcery CodeBench Lite Edition - Mentor Graphics</a></li>
