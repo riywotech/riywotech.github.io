@@ -146,7 +146,7 @@ $ vagrant up
 $ vagrant ssh
 </code></pre>
 
-<p><code>mruby</code>は最近ビルド方法が変わったらしく、rubyが必要なのでこれも適当に。Vagrantのboxだと大抵入ってるかな。あと必要なパッケージも適当に。</p>
+<p><code>mruby</code>は最近ビルド方法が変わったらしく、rubyが必要なのでこれも適当に。Vagrantのboxだと大抵入ってるかな。あと必要なパッケージも適当に。Vagrantfileに書いといてもいいね。</p>
 
 <pre><code>$ sudo apt-get install bison git
 </code></pre>
@@ -154,6 +154,12 @@ $ vagrant ssh
 <p>これで適当にクロスコンパイルの準備ができました。</p>
 
 <h2>make mruby</h2>
+
+<p>とりあえずコード取ってきます。</p>
+
+<pre><code>$ git clone https://github.com/mruby/mruby.git
+$ cd mruby
+</code></pre>
 
 <p><code>mruby</code>は<code>build_config.rb</code>というファイルでコンパイルの方法を色々変えられます(多分)。今回は以下を追加してみました。意味は簡単でMIPS用の<code>gcc</code>や<code>ar</code>が先ほどのSoucery CodeBenchに入ってるので、それを適当なオプションとともに指定してるだけです。</p>
 
