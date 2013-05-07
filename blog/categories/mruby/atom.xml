@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: mruby | As a SW/Ops/DB Engineer]]></title>
+  <link href="http://tech.riywo.com/blog/categories/mruby/atom.xml" rel="self"/>
+  <link href="http://tech.riywo.com/"/>
+  <updated>2013-05-07T08:26:08-07:00</updated>
+  <id>http://tech.riywo.com/</id>
+  <author>
+    <name><![CDATA[riywo]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[mruby on MIPS in PQI Air Pen]]></title>
+    <link href="http://tech.riywo.com/blog/2013/05/07/mruby-on-mips-in-pqi-air-pen/"/>
+    <updated>2013-05-07T07:40:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/05/07/mruby-on-mips-in-pqi-air-pen</id>
+    <content type="html"><![CDATA[<p>@moyashi さんの記事を読んで以来、ずっと欲しかったPQI Airシリーズなんですが、USのAmazonでは売ってなかったり無駄に高かったりして二の足を踏んでました。ある日、郵便局を使うと数百円で荷物が送れることが分かったので、日本のAmazonで買って実家に発送して送ってもらうことでついにゲットしました。</p>
+
+<ul>
+<li><a href="http://hitoriblog.com/?p=12627">ひとりぶろぐ » デジカメ内部でRubyを動かす狂気！無線LAN内蔵SDカードアダプタPQI Air Cardの間違った使い方</a></li>
+<li><a href="http://hitoriblog.com/?p=15926">ひとりぶろぐ » ポケット無線LANルータの新顔PQI Air Penの著しく間違った使い方</a></li>
+</ul>
+
+
+<p>ただ、Cardの方を動かせるmicroSDを持ってなかったので、今はPenでちょっと遊んでみただけです。何をやったかというと、<code>mruby</code>を動かしてみました。CRubyはちょっと動かせる自信なかったですが、最初から組み込み向けの<code>mruby</code>なら簡単かなぁと思ってやってみたら簡単でした。</p>
+
+<!-- more -->
+
+
+<h2>Cross Compile</h2>
+
+<p>PQI AirのハードウェアはCPUがMIPSで、使い慣れているx86/x86_64とは違います。ので単にいつもLinuxで使ってるバイナリをコピーしてもダメです。</p>
+
+<pre><code># cat /proc/cpuinfo
+system type             : Atheros AR9330 (Hornet)
+processor               : 0
+cpu model               : MIPS 24Kc V7.4
+BogoMIPS                : 232.96
+wait instruction        : yes
+microsecond timers      : yes
+tlb_entries             : 16
+extra interrupt vector  : yes
+hardware watchpoint     : yes, count: 4, address/irw mask: [0x0000, 0x0c68, 0x0ff8, 0x0393]
+ASEs implemented        : mips16
+shadow register sets    : 1
+core                    : 0
+VCED exceptions         : not available
+VCEI exceptions         : not available
+</code></pre>
+
+<p>さすがにここでコンパイルするのは、その環境を準備するところで挫折しそうなのでクロスコンパイル(別のアーキテクチャ用のバイナリをコンパイルする)をしました。</p>
+
+<p>やり方は@moyashiさんが紹介されているSourcery CodeBenchというツールチェインを使って静的リンクでコンパイルしただけです。楽チン。</p>
+
+<ul>
+<li><a href="http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/editions/lite-edition/">Sourcery CodeBench Lite Edition - Mentor Graphics</a></li>
+</ul>
+
+
+<p>Macで動かすにはこれ自体をセルフビルドする必要があったので萎えて、Vagrantで適当に32bit Linuxを起動して、インストール。適当に<code>PATH</code>を通しておきます。以下は<code>Vagrantfile</code>の例。</p>
+
+<pre><code>$ cat Vagrantfile
+Vagrant.configure("2") do |config|
+  config.vm.box = "precise32"
+  config.vm.box_url = "http://files.vagrantup.com/precise32.box"
+  config.vm.provision :shell, :inline =&gt; "apt-get install build-essential -y"
+end
+$ vagrant up
+$ vagrant ssh
+</code></pre>
+
+<p><code>mruby</code>は最近ビルド方法が変わったらしく、rubyが必要なのでこれも適当に。Vagrantのboxだと大抵入ってるかな。あと必要なパッケージも適当に。</p>
+
+<pre><code>$ sudo apt-get install bison git
+</code></pre>
+
+<p>これで適当にクロスコンパイルの準備ができました。</p>
+
+<h2>make mruby</h2>
+
+<p><code>mruby</code>は<code>build_config.rb</code>というファイルでコンパイルの方法を色々変えられます(多分)。今回は以下を追加してみました。意味は簡単でMIPS用の<code>gcc</code>や<code>ar</code>が先ほどのSoucery CodeBenchに入ってるので、それを適当なオプションとともに指定してるだけです。</p>
+
+<pre><code>MRuby::CrossBuild.new('pqi-air') do |conf|
+  toolchain :gcc
+
+  conf.gembox 'default'
+  conf.cc.command = "mips-linux-gnu-gcc"
+  conf.cc.flags &lt;&lt; %w(-g -O2 -Wall -static -march=24kc)
+  conf.linker.command = "mips-linux-gnu-gcc"
+  conf.linker.flags &lt;&lt; %w(-s -static)
+  conf.archiver.command = "mips-linux-gnu-ar"
+end
+</code></pre>
+
+<p>もともとある<code>MRuby::Build</code>の方を消すと<code>undefined method 'build_dir' for nil:NilClass</code>なるエラーになってしまうのでそれも残しておきます(何かやり方間違ってる気が。。。)</p>
+
+<p>あとは<code>make</code>したらできあがり。</p>
+
+<pre><code>$ make
+ruby ./minirake
+(in /home/vagrant/mruby)
+
+Build summary:
+
+================================================
+      Config Name: pqi-air
+ Output Directory: build/pqi-air
+         Binaries: mrbc
+    Included Gems:
+             mruby-sprintf
+             mruby-print
+             mruby-math
+             mruby-time
+             mruby-struct
+             mruby-enum-ext
+             mruby-string-ext
+             mruby-numeric-ext
+             mruby-array-ext
+             mruby-hash-ext
+             mruby-range-ext
+             mruby-proc-ext
+             mruby-symbol-ext
+             mruby-random
+             mruby-bin-mirb
+               - Binaries: mirb
+             mruby-bin-mruby
+               - Binaries: mruby
+================================================
+
+$ file build/pqi-air/bin/*
+build/pqi-air/bin/mirb:  ELF 32-bit MSB executable, MIPS, MIPS32 rel2 version 1, statically linked, for GNU/Linux 2.6.12, with unknown capability 0x41000000 = 0xf676e75, with unknown capability 0x10000 = 0x70401, stripped
+build/pqi-air/bin/mrbc:  ELF 32-bit MSB executable, MIPS, MIPS32 rel2 version 1, statically linked, for GNU/Linux 2.6.12, with unknown capability 0x41000000 = 0xf676e75, with unknown capability 0x10000 = 0x70401, stripped
+build/pqi-air/bin/mruby: ELF 32-bit MSB executable, MIPS, MIPS32 rel2 version 1, statically linked, for GNU/Linux 2.6.12, with unknown capability 0x41000000 = 0xf676e75, with unknown capability 0x10000 = 0x70401, stripped
+</code></pre>
+
+<h2>実行！</h2>
+
+<p>あとは出来上がったフォルダ一式(と言いつつ静的リンクした実行ファイルしか試してませんが。。。)をPQI Air Penに挿したSDカードにコピーしたら実行！</p>
+
+<pre><code># ./mruby -e 'p 1+1'
+2
+# ./mirb
+mirb - Embeddable Interactive Ruby Shell
+
+This is a very early version, please test and report errors.
+Thanks :)
+
+&gt; a = {:foo =&gt; 1, :bar =&gt; 2}
+ =&gt; {:foo=&gt;1, :bar=&gt;2}
+&gt; a.each { |k,v| p "#{k} =&gt; #{v}" }
+"foo =&gt; 1"
+"bar =&gt; 2"
+ =&gt; {:foo=&gt;1, :bar=&gt;2}
+</code></pre>
+
+<p>感動的ですね、こんなちっこいマシンの上でrubyが動くなんて。<code>mirb</code>は<code>readline</code>がないせいか、カーソルキー効かなくて不便ですが。。。</p>
+
+<p><code>mruby</code>のことは実はさっぱり分かってないのですが、色々楽しめそうです。興味ある方はぜひ遊んでみて下さい or 遊び方教えて下さい。</p>
+
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=futuristamazo-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=ss_til&asins=B00BNAST0O" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+
+
+
+
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=futuristamazo-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=ss_til&asins=B009HF63GE" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+
+]]></content>
+  </entry>
+  
+</feed>
