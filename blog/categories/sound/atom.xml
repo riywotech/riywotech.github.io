@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: sound | As a SW/Ops/DB Engineer]]></title>
+  <link href="http://tech.riywo.com/blog/categories/sound/atom.xml" rel="self"/>
+  <link href="http://tech.riywo.com/"/>
+  <updated>2013-05-07T22:27:46-07:00</updated>
+  <id>http://tech.riywo.com/</id>
+  <author>
+    <name><![CDATA[riywo]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Sonic Notify - a real broadcasting]]></title>
+    <link href="http://tech.riywo.com/blog/2013/05/07/sonic-notify-a-real-broadcasting/"/>
+    <updated>2013-05-07T21:57:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/05/07/sonic-notify-a-real-broadcasting</id>
+    <content type="html"><![CDATA[<h2>前置きというか能書き</h2>
+
+<p>アプリ作りたいですよね、アプリ。今日なんか作れないかなーと思って妄想してました。昨日こういうアプリを見かけて、</p>
+
+<ul>
+<li><a href="http://veadardiary.blog29.fc2.com/blog-entry-4473.html">iOSデバイスを画面に重ね合わせるだけでファイルの送受信ができる『PutOn Mac』 - Macの手書き説明書</a></li>
+</ul>
+
+
+<p>なるほど、もうTCP/IPで通信できるのは当たり前すぎて、その上でできること考えるよりも、なんか別な通信方法考えるの面白いかもなぁと思いました。</p>
+
+<p>上のアプリは多分映像のチカチカを使って0と1の情報を伝えてるんだと思いますが、だったら音声でもできるよね、と。音声だとブロードキャスト(ひとつの音源で沢山の人に伝えること)できるので映像より面白そう。</p>
+
+<!-- more -->
+
+
+<ul>
+<li><a href="http://awesomegeekblog.blogspot.com/2009/04/file-transfer-over-sound-card-ii-phase.html">Awesome Geek Blog: File transfer over sound card II: Phase Shift Keying</a></li>
+</ul>
+
+
+<p>探してみるとこういうことやってる人がいました。音を鳴らしてその信号にファイルの中身を乗っけて通信してしまうと。でもせっかくだったら人間の可聴域以外を使ってやれると、人間には聞こえないけど機械には聞こえる音であら不思議ファイルが転送できたりしたら魔法っぽくておもしろそう！</p>
+
+<h2>Sonic Notify</h2>
+
+<p>ということで色々下調べを初めて1時間、既にありました。。。しかもすごいのが。</p>
+
+<ul>
+<li><a href="http://sonicnotify.com/#!">Sonic Notify</a></li>
+</ul>
+
+
+<p>これまさにさっき上に書いたことそのまんまを既に実現してるみたいです。具体的な技術内容を見つけられてないのですが、アプリの挙動を見るにおそらく人間には聞こえない範囲の音を発生させてると思います。</p>
+
+<p>上記のサイトにあるdemoページの動画を、iPhoneアプリ起動した状態で視聴すると、あら不思議、ところどころで通知がきます。動画の音をミュートにすると通知はきません。</p>
+
+<ul>
+<li><a href="http://sonicnotify.com/#!/demos">デモページ</a></li>
+</ul>
+
+
+<p>ユーザ登録すると、自分でも試せるのでやってみました。コンポーネントはこんな感じ。</p>
+
+<ul>
+<li>Studio
+
+<ul>
+<li>実際のプロモーションを表現してる</li>
+<li>Programを追加するとStudioが出来る感じ？</li>
+<li>いろんなタイプがある（Live Concert, In-Store Display, Live Sportsなど)</li>
+<li>ContentsをStudioに対して指定できる
+
+<ul>
+<li>通知を受けた時の情報で画像とタイトル、URLやミニサイトを指定できる</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>App
+
+<ul>
+<li>iOSとAndroidのSDKがあるので、自分のアプリに組み込める</li>
+<li>テスト用には、先ほどインストールしたアプリに新しく作成したアプリのGUIDを反映させればOK</li>
+</ul>
+</li>
+<li>Channel
+
+<ul>
+<li>実際に信号を送る側の定義</li>
+<li>いろんなデバイスを売ってる！
+
+<ul>
+<li>コンセントに差すだけのやつ、音声信号の出力ができるやつ、など</li>
+</ul>
+</li>
+<li>テスト用にMacのクライアントアプリを利用した
+
+<ul>
+<li>起動して適当に新しいChannel名指定して繋ぐ</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<p>Program作って、Studio画面でAppとChannelを紐付けたら、多分クライアントアプリから音が出てます。iPhoneのアプリのGUIDを切り替えたら自分の設定した画像とリンクが通知されました。すごい。</p>
+
+<h2>中身推察</h2>
+
+<p>多分、</p>
+
+<ul>
+<li>アプリのGUIDが秘密鍵的なものになってる？
+
+<ul>
+<li>送信側と受信側で同じ鍵を設定すれば、その信号が取り出せる</li>
+</ul>
+</li>
+<li>最終的に情報取り出す時にクライアントはインターネット通信してる
+
+<ul>
+<li>iPhoneをAirplaneモードにしたら受信してくれなかった</li>
+<li>Sonic Notifyのサイトにデバイス毎の分析画面とかあるので多分この時情報送ってる？</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>まとめ</h2>
+
+<p>技術的興味津津なんですが、それはさておき色々使い道のある技術だとは思いませんか？ユースケースとして挙がってる、コンサート会場で観客にプレゼント配布とか、小売店でキャンペーン情報とか、リアルにその場にいる時に受け取ることに価値がある様なものにフィットしそう。</p>
+
+<p>ちょうど今年はiOSアプリに挑戦したいと思ってたので、折を見てこのSDKを組み込んで遊んで見るかもしれませんが、先に人柱誰か！</p>
+]]></content>
+  </entry>
+  
+</feed>
