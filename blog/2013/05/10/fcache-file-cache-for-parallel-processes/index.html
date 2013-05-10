@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>python mox example - As a SW/Ops/DB Engineer</title>
+  <title>fcache - file cache for parallel processes - As a SW/Ops/DB Engineer</title>
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="Pythonの小さいスクリプトを書いたんですが、せっかくなんでテストも書いてみようと思ってあがいたメモ。やりたかったのは、スクリプトの中で行ってるIO(ファイルとIPC)をテスト中は上書きして、テストデータを返す、みたいなこと。 初めはmockというのでやってたんですが、subprocess. &hellip;">
+  <meta name="description" content="以前からたまーにこういうのがあるとうれしいケースがあるなぁと思ってたので作りました。 riywo/fcache · GitHub どういうものかというと、こういう感じで何かstdoutに吐き出すコマンドの前にfcache EXPIRE_SECというのを付け足して実行すると、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tech.riywo.com/blog/2013/04/19/python-mox-example">
+  <link rel="canonical" href="http://tech.riywo.com/blog/2013/05/10/fcache-file-cache-for-parallel-processes">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="As a SW/Ops/DB Engineer" type="application/atom+xml">
@@ -68,7 +68,7 @@
   
   <header>
     
-      <h1 class="entry-title">Python Mox Example</h1>
+      <h1 class="entry-title">Fcache - File Cache for Parallel Processes</h1>
     
     
       <p class="meta">
@@ -84,28 +84,77 @@
   
 
 
-<time datetime="2013-04-19T19:55:00-07:00" pubdate data-updated="true">Apr 19<span>th</span>, 2013</time>
+<time datetime="2013-05-10T01:46:00-07:00" pubdate data-updated="true">May 10<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Pythonの小さいスクリプトを書いたんですが、せっかくなんでテストも書いてみようと思ってあがいたメモ。やりたかったのは、スクリプトの中で行ってるIO(ファイルとIPC)をテスト中は上書きして、テストデータを返す、みたいなこと。</p>
+<div class="entry-content"><p>以前からたまーにこういうのがあるとうれしいケースがあるなぁと思ってたので作りました。</p>
+
+<ul>
+<li><a href="https://github.com/riywo/fcache">riywo/fcache · GitHub</a></li>
+</ul>
+
+
+<p>どういうものかというと、こういう感じで何かstdoutに吐き出すコマンドの前に<code>fcache EXPIRE_SEC</code>というのを付け足して実行すると、初回はコマンドを実行して結果をファイルに保存しつつstdoutにも出力します。</p>
+
+<pre><code>$ fcache 10 curl -s example.com
+hoge
+</code></pre>
+
+<p>次に、同じ<code>fcache</code>コマンドを叩くと、保存されているキャッシュファイルの時刻を見て、expire時刻を過ぎてなければ単にそのファイルの中身をstdoutに吐き出して終了します。</p>
+
+<pre><code>$ fcache 10 curl -s example.com # 実際はcurlは実行されない
+hoge
+</code></pre>
+
+<p>expire時刻を過ぎていれば初回と同じ動きをしてキャッシュを更新してくれます。<code>flock</code>を使って、読み込みだけなら共有ロックで並列に、書き込みが発生する時には排他ロック、みたいな処理をしてます(が何分まともな排他制御書いたことないのできっとバグってます。。。)</p>
 
 <!-- more -->
 
 
-<p>初めは<code>mock</code>というのでやってたんですが、<code>subprocess.Popen()</code>がさらにメソッドを呼び出す形で使うのでどうやってやったらいいのか分からなくて、<code>mox</code>を使ってとりあえずできたのでそれを記録。</p>
+<h2>何の役に立つの？</h2>
 
-<p><code>Example.run()</code>は、ファイルを読み込んだ内容とコマンド実行結果をつなげて返すだけ。</p>
+<p>特に監視の処理の中で、ほぼ同時に並列で1つのAPIを叩く監視項目があった時に、みんなが同じAPIを叩くのは非効率だなぁと思った時に効果があります(つまりニッチ)。何も気にせず<code>fcache</code>コマンドを並列に実行すれば、最初の人がAPIを叩いてキャッシュしてくれて、あとの人はキャッシュを利用してくれます。</p>
 
-<script src="https://gist.github.com/riywo/5424458.js"></script>
+<p>例えばZabbixという監視ソフトには<code>UserParameter</code>というagent側でコマンドを実行して数値を返す、みたいなのが定義できます。</p>
 
+<pre><code>$ curl -s localhost
+aaa 1
+bbb 2
+ccc 3
 
-<p>もっとスマートなやり方やオススメもモジュールがあればぜひ教えてくださいませ〜</p>
+$ cat /path/to/zabbix_agentd.conf
+UserParameter=example.key[*],curl -s localhost | grep $1 | cut -f 2
+</code></pre>
 
-<p>cf. <a href="http://stackoverflow.com/questions/5237693/mocking-openfile-name-in-unit-tests">python - Mocking open(file_name) in unit tests - Stack Overflow</a></p>
+<p>上の様な設定をしたサーバがあったとすると、<code>zabbix_get</code>で<code>aaa</code>,<code>bbb</code>,<code>ccc</code>の値が取れます。</p>
+
+<pre><code>$ zabbix_get -s server -k example.key[aaa]
+1
+$ zabbix_get -s server -k example.key[bbb]
+2
+$ zabbix_get -s server -k example.key[ccc]
+3
+</code></pre>
+
+<p>ただし、これだと3回<code>curl</code>が呼ばれます。もし<code>curl</code>を減らしたいなら、1つのitemでスクリプトを実行してその中で1回だけ<code>curl</code>してから全てのキーについて<code>zabbix_sender</code>で送る、とかも考えられます。</p>
+
+<pre><code>$ cat /path/to/zabbix_agentd.conf
+UserParameter=example.key,/path/to/script # 中でzabbix_senderを複数実行
+</code></pre>
+
+<p><code>fcache</code>を使うとシンプルに実現できます。これならキャッシュの有効期間中は<code>curl</code>は叩かれませんし、configも素直です。</p>
+
+<pre><code>$ cat /path/to/zabbix_agentd.conf
+UserParameter=example.key[*],fcache 10 curl -s localhost | grep $1 | cut -f 2
+</code></pre>
+
+<h2>おわりに</h2>
+
+<p>適当に作った上に、自分で使ってるわけでもないので自己責任でご利用下さい。こういうコンセプトがあってもおもしろいよねという提案がしたかったのと、ちょうどpythonの勉強がしたかったので、自分的には満足です。</p>
 </div>
 
 
@@ -128,12 +177,12 @@
   
 
 
-<time datetime="2013-04-19T19:55:00-07:00" pubdate data-updated="true">Apr 19<span>th</span>, 2013</time>
+<time datetime="2013-05-10T01:46:00-07:00" pubdate data-updated="true">May 10<span>th</span>, 2013</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/python/'>python</a>, <a class='category' href='/blog/categories/test/'>test</a>
+    <a class='category' href='/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/categories/python/'>python</a>
   
 </span>
 
@@ -142,7 +191,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tech.riywo.com/blog/2013/04/19/python-mox-example/" data-via="riywo" data-counturl="http://tech.riywo.com/blog/2013/04/19/python-mox-example/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tech.riywo.com/blog/2013/05/10/fcache-file-cache-for-parallel-processes/" data-via="riywo" data-counturl="http://tech.riywo.com/blog/2013/05/10/fcache-file-cache-for-parallel-processes/" >Tweet</a>
   
   
   
@@ -153,10 +202,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/04/19/yet-another-shell-script/" title="Previous Post: Yet Another shell script">&laquo; Yet Another shell script</a>
+        <a class="basic-alignment left" href="/blog/2013/05/07/sonic-notify-a-real-broadcasting/" title="Previous Post: Sonic Notify - a real broadcasting">&laquo; Sonic Notify - a real broadcasting</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/04/23/webtail-plus-ncat-equals-simple-log-monitoring-slash/" title="Next Post: webtail + ncat = simple log monitoring!">webtail + ncat = simple log monitoring! &raquo;</a>
       
     </p>
   </footer>
@@ -251,8 +298,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://tech.riywo.com/blog/2013/04/19/python-mox-example/';
-        var disqus_url = 'http://tech.riywo.com/blog/2013/04/19/python-mox-example/';
+        var disqus_identifier = 'http://tech.riywo.com/blog/2013/05/10/fcache-file-cache-for-parallel-processes/';
+        var disqus_url = 'http://tech.riywo.com/blog/2013/05/10/fcache-file-cache-for-parallel-processes/';
         var disqus_script = 'embed.js';
       
     (function () {

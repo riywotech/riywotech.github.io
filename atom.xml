@@ -4,7 +4,7 @@
   <title><![CDATA[As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-05-07T22:27:43-07:00</updated>
+  <updated>2013-05-10T02:10:54-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -12,6 +12,78 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[fcache - file cache for parallel processes]]></title>
+    <link href="http://tech.riywo.com/blog/2013/05/10/fcache-file-cache-for-parallel-processes/"/>
+    <updated>2013-05-10T01:46:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/05/10/fcache-file-cache-for-parallel-processes</id>
+    <content type="html"><![CDATA[<p>以前からたまーにこういうのがあるとうれしいケースがあるなぁと思ってたので作りました。</p>
+
+<ul>
+<li><a href="https://github.com/riywo/fcache">riywo/fcache · GitHub</a></li>
+</ul>
+
+
+<p>どういうものかというと、こういう感じで何かstdoutに吐き出すコマンドの前に<code>fcache EXPIRE_SEC</code>というのを付け足して実行すると、初回はコマンドを実行して結果をファイルに保存しつつstdoutにも出力します。</p>
+
+<pre><code>$ fcache 10 curl -s example.com
+hoge
+</code></pre>
+
+<p>次に、同じ<code>fcache</code>コマンドを叩くと、保存されているキャッシュファイルの時刻を見て、expire時刻を過ぎてなければ単にそのファイルの中身をstdoutに吐き出して終了します。</p>
+
+<pre><code>$ fcache 10 curl -s example.com # 実際はcurlは実行されない
+hoge
+</code></pre>
+
+<p>expire時刻を過ぎていれば初回と同じ動きをしてキャッシュを更新してくれます。<code>flock</code>を使って、読み込みだけなら共有ロックで並列に、書き込みが発生する時には排他ロック、みたいな処理をしてます(が何分まともな排他制御書いたことないのできっとバグってます。。。)</p>
+
+<!-- more -->
+
+
+<h2>何の役に立つの？</h2>
+
+<p>特に監視の処理の中で、ほぼ同時に並列で1つのAPIを叩く監視項目があった時に、みんなが同じAPIを叩くのは非効率だなぁと思った時に効果があります(つまりニッチ)。何も気にせず<code>fcache</code>コマンドを並列に実行すれば、最初の人がAPIを叩いてキャッシュしてくれて、あとの人はキャッシュを利用してくれます。</p>
+
+<p>例えばZabbixという監視ソフトには<code>UserParameter</code>というagent側でコマンドを実行して数値を返す、みたいなのが定義できます。</p>
+
+<pre><code>$ curl -s localhost
+aaa 1
+bbb 2
+ccc 3
+
+$ cat /path/to/zabbix_agentd.conf
+UserParameter=example.key[*],curl -s localhost | grep $1 | cut -f 2
+</code></pre>
+
+<p>上の様な設定をしたサーバがあったとすると、<code>zabbix_get</code>で<code>aaa</code>,<code>bbb</code>,<code>ccc</code>の値が取れます。</p>
+
+<pre><code>$ zabbix_get -s server -k example.key[aaa]
+1
+$ zabbix_get -s server -k example.key[bbb]
+2
+$ zabbix_get -s server -k example.key[ccc]
+3
+</code></pre>
+
+<p>ただし、これだと3回<code>curl</code>が呼ばれます。もし<code>curl</code>を減らしたいなら、1つのitemでスクリプトを実行してその中で1回だけ<code>curl</code>してから全てのキーについて<code>zabbix_sender</code>で送る、とかも考えられます。</p>
+
+<pre><code>$ cat /path/to/zabbix_agentd.conf
+UserParameter=example.key,/path/to/script # 中でzabbix_senderを複数実行
+</code></pre>
+
+<p><code>fcache</code>を使うとシンプルに実現できます。これならキャッシュの有効期間中は<code>curl</code>は叩かれませんし、configも素直です。</p>
+
+<pre><code>$ cat /path/to/zabbix_agentd.conf
+UserParameter=example.key[*],fcache 10 curl -s localhost | grep $1 | cut -f 2
+</code></pre>
+
+<h2>おわりに</h2>
+
+<p>適当に作った上に、自分で使ってるわけでもないので自己責任でご利用下さい。こういうコンセプトがあってもおもしろいよねという提案がしたかったのと、ちょうどpythonの勉強がしたかったので、自分的には満足です。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Sonic Notify - a real broadcasting]]></title>
