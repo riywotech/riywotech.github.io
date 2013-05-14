@@ -4,7 +4,7 @@
   <title><![CDATA[As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-05-10T02:10:54-07:00</updated>
+  <updated>2013-05-13T19:45:51-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -12,6 +12,47 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[provisioning itself]]></title>
+    <link href="http://tech.riywo.com/blog/2013/05/13/provisioning-itself/"/>
+    <updated>2013-05-13T19:15:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/05/13/provisioning-itself</id>
+    <content type="html"><![CDATA[<p>これ読んで思ったこと。</p>
+
+<ul>
+<li><a href="http://d.hatena.ne.jp/mizchi/20130512/1368351397">プログラミングはそれ自体が目的であっていい - mizchi log</a></li>
+</ul>
+
+
+<p>全く同じ所感を、昨今のserver provisioningブームやクラウド万歳を見てて思う。</p>
+
+<!-- more -->
+
+
+<h2>「動けばいい」サーバ構築</h2>
+
+<p>programmingそれ自体は歴史が積み上げられていて、「動けばいい」が悪であることやそれを如何にして回避するかということについて、偏執的な人達の惜しみない努力が費やされた結果、次のステージへ移っていっているような気がする。(僕はコード書いたことないのであくまで外野の推測)</p>
+
+<p>一方、provisioning(サーバを構築する)とかその他operationにまつわる物事はその昔programmingが通ってきた道をやっと歩み始めたところ。例えばprovisioningにおいて「動けばいい」は手で対話式に構築されたサーバみたいなもの。手順書すらなかったりして、bashのhistoryと現状の状態をつぶさに観察して同じ状況を作るにはどうすればいいかを解析したことあるけど、リバースエンジニアリングっぽくて後から任された人には全然生産的じゃない。けど、それはそれで地雷を踏みまくるトレーニングになって、実際僕もそういうのをたくさん経験して全部今役に立ってる。</p>
+
+<h2>偏執的な貢献</h2>
+
+<p>ChefとかPuppetはそういうのを一歩先にすすめてくれるツールで、まず正しい状態はなんだったでしょう？から入ってサーバの状態を定義して、それに持っていく部分をいい感じにヘルプしてくれる。けどまだ完璧じゃない。当然だ、まだまだ「provisioningだけ」を目的にしている偏執的な人達の貢献が足りない。</p>
+
+<p>CやJavaだけがプログラミング言語ではないのと同様に、provisioning一つ取ったってやり方は無限にある。僕は<a href="https://speakerdeck.com/riywo/ops-tool-made-by-perl-beginner-number-yapcasia-2012">Touryo</a>というツールを作って一つの方式を実現したし、それは今では<a href="http://serverspec.org/">serverspec</a>とprovisioningツールの組み合わせで実現できるなぁと思ってる。（ホントはもっと色々必要だけど割愛）</p>
+
+<p>別に「インフラがコードになる」とかそういうのはどうでもいいプロパガンダで、本質的に僕が大事にしたいと思ってるのは、一部の言語マニアの様に偏執的に「運用」に取り組める人がどれだけ出てくるのかというところ。僕は多分偏執的な考えだけは持ってて実装力が無い人なので、思いついたアイデア(<a href="https://github.com/riywo/ruby-llenv">llenv</a>とか<a href="https://github.com/riywo/myroku-cookbooks">myroku</a>とか<a href="https://github.com/riywo/pandler">pandler</a>とか)をひーこらしながら実装してそこで力尽きてるけど、これからもっと才能あふれる人達がやってくることを期待してて、彼らのためになんかできないかなーと日々悶々としてる。</p>
+
+<p>まだまだこの分野、学術的な研究も実践的な積み上げも足りてないと思う(学術分野は未調査なので誰か補足が欲しい)。なので「ウェブオペレーション」にもあった様に、徒弟制度の様な形がありふれてしまっている様に思う。が、致し方ないことであり、これから体系化されて行ったり、これまで想像もつかなかったようなパラダイムが出現したりするのが本当に楽しみだ。多分すでに企業の中とか組織の中とかには色々存在するんだろうけど、教科書的にまとまってるのは無いように思う。</p>
+
+<h2>おわりに</h2>
+
+<p>「サーバ構築なんて一度やったらあとはやらなくていいじゃん」とか「なんでパッケージ一つ入れるだけなのに/スクリプト一つ撒くだけなのにこんなにめんどくさいことするの？」とか思ってる人は、自分が「動けばいい」と思っているんだと認識した方がいいと思う。それはいつなんどきも悪ということではないけど、先のエントリにあるように悪となる場面も確実に存在する。そして昨今そういう状況が増えているからこそ、provisioningブームが存在するんだと思う。書けなかったけど、クラウドブームも僕には同じように映ってる。</p>
+
+<p>というわけで、アナロジーを全開にするならmizchiさんの「糞コードを一箇所に押し込める」リファクタリングはprovisioningにも応用できそうだなーと思ったところでこれを書いた。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[fcache - file cache for parallel processes]]></title>
