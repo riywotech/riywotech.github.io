@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mruby | As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/blog/categories/mruby/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-05-13T19:45:54-07:00</updated>
+  <updated>2013-06-11T00:49:21-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -57,7 +57,7 @@ VCEI exceptions         : not available
 <p>やり方はmoyashiさんが紹介されているSourcery CodeBenchというツールチェインを使って静的リンクでコンパイルしただけです。楽チン。</p>
 
 <ul>
-<li><a href="http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/editions/lite-edition/">Sourcery CodeBench Lite Edition - Mentor Graphics</a></li>
+<li><a href="http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/editions/lite-edition/">Sourcery CodeBench Lite Edition &ndash; Mentor Graphics</a></li>
 </ul>
 
 
