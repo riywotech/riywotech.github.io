@@ -4,7 +4,7 @@
   <title><![CDATA[As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-06-11T01:02:38-07:00</updated>
+  <updated>2013-06-18T17:50:04-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -12,6 +12,110 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[git rollback]]></title>
+    <link href="http://tech.riywo.com/blog/2013/06/18/git-rollback/"/>
+    <updated>2013-06-18T17:20:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/06/18/git-rollback</id>
+    <content type="html"><![CDATA[<p>One day, I wanted to rollback git repository to a previous commit with a new &ldquo;rollback&rdquo; commit because the wrong commits had already pushed to the master.</p>
+
+<p>Generally, <code>git revert -n HASH</code> works, however, if some files are added or deleted, it doesn&rsquo;t work well. Here is an example.</p>
+
+<!-- more -->
+
+
+<pre><code>$ git init
+$ echo important &gt; important
+$ touch important_empty
+$ git commit -a -m 'init'
+
+$ git rm important important_empty
+$ echo wrong &gt; wrong
+$ touch wrong_empty
+$ git commit -a -m 'wrong' ## WRONG COMMIT!
+
+$ git revert -n INITHASH  ## want to rollback to INITHASH
+$ git status
+# On branch master
+nothing to commit, working directory clean
+$ ls
+wrong       wrong_empty
+</code></pre>
+
+<p>So, I tried some ways. First, <code>git checkout INITHASN .</code>. It worked only for deleted files.</p>
+
+<pre><code>$ git checkout INITHASH .
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD &lt;file&gt;..." to unstage)
+#
+#   new file:   important
+#   new file:   important_empty
+#
+$ ls
+important       important_empty wrong           wrong_empty
+</code></pre>
+
+<p>Second, <code>git checkout -b rollback INITHASH</code> and <code>git merge</code>. Unfortunately, <code>INITHASH</code> had already merged, so it happened nothing.</p>
+
+<pre><code>$ git checkout -b rollback INITHASH
+$ ls
+important       important_empty
+$ git checkout master
+$ git merge rollback
+Already up-to-date.
+</code></pre>
+
+<p>Third, <code>git diff</code> and <code>patch</code>. It affected only non-empty files because <code>git diff</code> output for empty files was not good for <code>patch</code> command.</p>
+
+<pre><code>$ git diff HEAD..INITHASH | patch -p1
+patching file important
+patching file wrong
+$ git status
+# On branch master
+# Changes not staged for commit:
+#   (use "git add/rm &lt;file&gt;..." to update what will be committed)
+#   (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+#
+#   deleted:    wrong
+#
+# Untracked files:
+#   (use "git add &lt;file&gt;..." to include in what will be committed)
+#
+#   important
+no changes added to commit (use "git add" and/or "git commit -a")
+$ ls
+important   wrong_empty
+</code></pre>
+
+<p>Finally, I found the best way, that is <code>git apply</code>.</p>
+
+<pre><code>$ git diff HEAD..INITHASH &gt; /tmp/patch
+$ git apply /tmp/patch
+$ git status
+# On branch master
+# Changes not staged for commit:
+#   (use "git add/rm &lt;file&gt;..." to update what will be committed)
+#   (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+#
+#   deleted:    wrong
+#   deleted:    wrong_empty
+#
+# Untracked files:
+#   (use "git add &lt;file&gt;..." to include in what will be committed)
+#
+#   important
+#   important_empty
+no changes added to commit (use "git add" and/or "git commit -a")
+$ ls
+important       important_empty
+</code></pre>
+
+<p>Hey, git experts, is this the best way to create a new &ldquo;rollback&rdquo; commit?</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[anyenv]]></title>
