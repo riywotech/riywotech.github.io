@@ -93,24 +93,49 @@
 
 <div class="entry-content"><p>One day, I wanted to rollback git repository to a previous commit with a new &ldquo;rollback&rdquo; commit because the wrong commits had already pushed to the master.</p>
 
-<p>Generally, <code>git revert -n HASH</code> works, however, if some files are added or deleted, it doesn&rsquo;t work well. Here is an example.</p>
-
 <!-- more -->
 
+
+<h3>MODIFIED: The best way is <code>git revert -n INITHASH..HEAD</code>!</h3>
+
+<p>Thanks, @miyagawa!</p>
 
 <pre><code>$ git init
 $ echo important &gt; important
 $ touch important_empty
 $ git add .
 $ git commit -m 'init'
+$ ls
+important       important_empty
 
 $ git rm important important_empty
 $ echo wrong &gt; wrong
 $ touch wrong_empty
 $ git add .
 $ git commit -m 'wrong' ## WRONG COMMIT!
+$ ls
+wrong       wrong_empty
 
-$ git revert -n INITHASH  ## want to rollback to INITHASH
+$ git revert -n INITHASH..HEAD
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD &lt;file&gt;..." to unstage)
+#
+#   new file:   important
+#   renamed:    wrong_empty -&gt; important_empty
+#   deleted:    wrong
+#
+$ ls
+important       important_empty
+</code></pre>
+
+<h3>old posts</h3>
+
+<p><del>Generally, <code>git revert -n HASH</code> works, however, if some files are added or deleted, it doesn&rsquo;t work well. Here is an example.</del></p>
+
+<p><code>git revert</code> is not the way to revert &ldquo;to HASH&rdquo;, but to revert &ldquo;HASH&rdquo;.</p>
+
+<pre><code>$ git revert -n INITHASH  ## want to rollback to INITHASH
 $ git status
 # On branch master
 nothing to commit, working directory clean
