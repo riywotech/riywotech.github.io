@@ -101,12 +101,14 @@
 <pre><code>$ git init
 $ echo important &gt; important
 $ touch important_empty
-$ git commit -a -m 'init'
+$ git add .
+$ git commit -m 'init'
 
 $ git rm important important_empty
 $ echo wrong &gt; wrong
 $ touch wrong_empty
-$ git commit -a -m 'wrong' ## WRONG COMMIT!
+$ git add .
+$ git commit -m 'wrong' ## WRONG COMMIT!
 
 $ git revert -n INITHASH  ## want to rollback to INITHASH
 $ git status
