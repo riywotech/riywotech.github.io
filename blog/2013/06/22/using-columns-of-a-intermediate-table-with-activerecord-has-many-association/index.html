@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>git rollback - As a SW/Ops/DB Engineer</title>
+  <title>Using columns of a intermediate table with ActiveRecord has_many association - As a SW/Ops/DB Engineer</title>
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="One day, I wanted to rollback git repository to a previous commit with a new &ldquo;rollback&rdquo; commit because the wrong commits had already &hellip;">
+  <meta name="description" content="I have n:m relation tables and want to use columns of the intermediate table. activerecord (4.0.0.rc2) class User &lt; ActiveRecord::Base has_many : &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tech.riywo.com/blog/2013/06/18/git-rollback">
+  <link rel="canonical" href="http://tech.riywo.com/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="As a SW/Ops/DB Engineer" type="application/atom+xml">
@@ -68,7 +68,7 @@
   
   <header>
     
-      <h1 class="entry-title">Git Rollback</h1>
+      <h1 class="entry-title">Using Columns of a Intermediate Table With ActiveRecord Has_many Association</h1>
     
     
       <p class="meta">
@@ -84,138 +84,52 @@
   
 
 
-<time datetime="2013-06-18T17:20:00-07:00" pubdate data-updated="true">Jun 18<span>th</span>, 2013</time>
+<time datetime="2013-06-22T09:51:00-07:00" pubdate data-updated="true">Jun 22<span>nd</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>One day, I wanted to rollback git repository to a previous commit with a new &ldquo;rollback&rdquo; commit because the wrong commits had already pushed to the master.</p>
+<div class="entry-content"><p>I have n:m relation tables and want to use columns of the intermediate table.</p>
+
+<pre><code>activerecord (4.0.0.rc2)
+
+class User &lt; ActiveRecord::Base
+  has_many :user_bookmarks
+  has_many :bookmarks, through: :user_bookmarks
+end
+
+class UserBookmark &lt; ActiveRecord::Base
+  belongs_to :user
+  belongs_to :bookmark
+  # has column "star"
+end
+
+class Bookmark &lt; ActiveRecord::Base
+  has_many :user_bookmarks
+  has_many :users, through: :user_bookmarks
+end
+
+&gt; User.first.bookmarks.first.star
+NoMethodError: undefined method `star' for #&lt;Bookmark:0x007ff40e45a7b8&gt;
+</code></pre>
 
 <!-- more -->
 
 
-<h3>MODIFIED: The best way is <code>git revert -n INITHASH..HEAD</code>!</h3>
+<p>I used a scope block for <code>has_many</code>.</p>
 
-<p>Thanks, @miyagawa!</p>
+<pre><code>class User &lt; ActiveRecord::Base
+  has_many :user_bookmarks
+  has_many :bookmarks, -&gt; { select("bookmarks.*, user_bookmarks.star") }, through: :user_bookmarks
+end
 
-<pre><code>$ git init
-$ echo important &gt; important
-$ touch important_empty
-$ git add .
-$ git commit -m 'init'
-$ ls
-important       important_empty
-
-$ git rm important important_empty
-$ echo wrong &gt; wrong
-$ touch wrong_empty
-$ git add .
-$ git commit -m 'wrong' ## WRONG COMMIT!
-$ ls
-wrong       wrong_empty
-
-$ git revert -n INITHASH..HEAD
-# On branch master
-# Changes to be committed:
-#   (use "git reset HEAD &lt;file&gt;..." to unstage)
-#
-#   new file:   important
-#   renamed:    wrong_empty -&gt; important_empty
-#   deleted:    wrong
-#
-$ ls
-important       important_empty
+&gt; User.first.bookmarks.first.star
+10
 </code></pre>
 
-<hr />
-
-<h3>old posts</h3>
-
-<p><del>Generally, <code>git revert -n HASH</code> works, however, if some files are added or deleted, it doesn&rsquo;t work well. Here is an example.</del></p>
-
-<p><code>git revert</code> is not the way to revert &ldquo;to HASH&rdquo;, but to revert &ldquo;HASH&rdquo;.</p>
-
-<pre><code>$ git revert -n INITHASH  ## want to rollback to INITHASH
-$ git status
-# On branch master
-nothing to commit, working directory clean
-$ ls
-wrong       wrong_empty
-</code></pre>
-
-<p>So, I tried some ways. First, <code>git checkout INITHASN .</code>. It worked only for deleted files.</p>
-
-<pre><code>$ git checkout INITHASH .
-$ git status
-# On branch master
-# Changes to be committed:
-#   (use "git reset HEAD &lt;file&gt;..." to unstage)
-#
-#   new file:   important
-#   new file:   important_empty
-#
-$ ls
-important       important_empty wrong           wrong_empty
-</code></pre>
-
-<p>Second, <code>git checkout -b rollback INITHASH</code> and <code>git merge</code>. Unfortunately, <code>INITHASH</code> had already merged, so it happened nothing.</p>
-
-<pre><code>$ git checkout -b rollback INITHASH
-$ ls
-important       important_empty
-$ git checkout master
-$ git merge rollback
-Already up-to-date.
-</code></pre>
-
-<p>Third, <code>git diff</code> and <code>patch</code>. It affected only non-empty files because <code>git diff</code> output for empty files was not good for <code>patch</code> command.</p>
-
-<pre><code>$ git diff HEAD..INITHASH | patch -p1
-patching file important
-patching file wrong
-$ git status
-# On branch master
-# Changes not staged for commit:
-#   (use "git add/rm &lt;file&gt;..." to update what will be committed)
-#   (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
-#
-#   deleted:    wrong
-#
-# Untracked files:
-#   (use "git add &lt;file&gt;..." to include in what will be committed)
-#
-#   important
-no changes added to commit (use "git add" and/or "git commit -a")
-$ ls
-important   wrong_empty
-</code></pre>
-
-<p>Finally, I found the best way, that is <code>git apply</code>.</p>
-
-<pre><code>$ git diff HEAD..INITHASH &gt; /tmp/patch
-$ git apply /tmp/patch
-$ git status
-# On branch master
-# Changes not staged for commit:
-#   (use "git add/rm &lt;file&gt;..." to update what will be committed)
-#   (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
-#
-#   deleted:    wrong
-#   deleted:    wrong_empty
-#
-# Untracked files:
-#   (use "git add &lt;file&gt;..." to include in what will be committed)
-#
-#   important
-#   important_empty
-no changes added to commit (use "git add" and/or "git commit -a")
-$ ls
-important       important_empty
-</code></pre>
-
-<p>Hey, git experts, is this the best way to create a new &ldquo;rollback&rdquo; commit?</p>
+<p>I&rsquo;m not sure whether this is the best way for the purpose, but it works.</p>
 </div>
 
 
@@ -238,12 +152,12 @@ important       important_empty
   
 
 
-<time datetime="2013-06-18T17:20:00-07:00" pubdate data-updated="true">Jun 18<span>th</span>, 2013</time>
+<time datetime="2013-06-22T09:51:00-07:00" pubdate data-updated="true">Jun 22<span>nd</span>, 2013</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/git/'>git</a>
+    <a class='category' href='/blog/categories/activerecord/'>activerecord</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
   
 </span>
 
@@ -252,7 +166,7 @@ important       important_empty
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tech.riywo.com/blog/2013/06/18/git-rollback/" data-via="riywo" data-counturl="http://tech.riywo.com/blog/2013/06/18/git-rollback/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tech.riywo.com/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/" data-via="riywo" data-counturl="http://tech.riywo.com/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/" >Tweet</a>
   
   
   
@@ -263,10 +177,8 @@ important       important_empty
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/06/11/anyenv/" title="Previous Post: anyenv">&laquo; anyenv</a>
+        <a class="basic-alignment left" href="/blog/2013/06/22/ruby-build-enable-load-relative/" title="Previous Post: ruby-build --enable-load-relative">&laquo; ruby-build --enable-load-relative</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/06/22/ruby-build-enable-load-relative/" title="Next Post: ruby-build --enable-load-relative">ruby-build --enable-load-relative &raquo;</a>
       
     </p>
   </footer>
@@ -361,8 +273,8 @@ important       important_empty
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://tech.riywo.com/blog/2013/06/18/git-rollback/';
-        var disqus_url = 'http://tech.riywo.com/blog/2013/06/18/git-rollback/';
+        var disqus_identifier = 'http://tech.riywo.com/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/';
+        var disqus_url = 'http://tech.riywo.com/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/';
         var disqus_script = 'embed.js';
       
     (function () {

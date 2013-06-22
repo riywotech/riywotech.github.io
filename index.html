@@ -9,8 +9,7 @@
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="CRuby builds a ruby binary and scripts with the absolute path hard corded. $ strings /Users/riywo/.rbenv/versions/1.9.3-p327/bin/ruby | grep rbenv
-/ &hellip;">
+  <meta name="description" content="I have n:m relation tables and want to use columns of the intermediate table. activerecord (4.0.0.rc2) class User &lt; ActiveRecord::Base has_many : &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +65,69 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/">Using Columns of a Intermediate Table With ActiveRecord Has_many Association</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-22T09:51:00-07:00" pubdate data-updated="true">Jun 22<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I have n:m relation tables and want to use columns of the intermediate table.</p>
+
+<pre><code>activerecord (4.0.0.rc2)
+
+class User &lt; ActiveRecord::Base
+  has_many :user_bookmarks
+  has_many :bookmarks, through: :user_bookmarks
+end
+
+class UserBookmark &lt; ActiveRecord::Base
+  belongs_to :user
+  belongs_to :bookmark
+  # has column "star"
+end
+
+class Bookmark &lt; ActiveRecord::Base
+  has_many :user_bookmarks
+  has_many :users, through: :user_bookmarks
+end
+
+&gt; User.first.bookmarks.first.star
+NoMethodError: undefined method `star' for #&lt;Bookmark:0x007ff40e45a7b8&gt;
+</code></pre>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -508,47 +570,6 @@ hoge
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/19/yet-another-shell-script/">Yet Another Shell Script</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-19T14:54:00-07:00" pubdate data-updated="true">Apr 19<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>How about such an alternative shell script?</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/04/19/yet-another-shell-script/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -564,6 +585,10 @@ hoge
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/">Using columns of a intermediate table with ActiveRecord has_many association</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/06/22/ruby-build-enable-load-relative/">ruby-build &#8211;enable-load-relative</a>
       </li>
     
@@ -577,10 +602,6 @@ hoge
     
       <li class="post">
         <a href="/blog/2013/05/13/provisioning-itself/">provisioning itself</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/05/10/fcache-file-cache-for-parallel-processes/">fcache - file cache for parallel processes</a>
       </li>
     
   </ul>

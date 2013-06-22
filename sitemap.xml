@@ -63,12 +63,18 @@
         <lastmod>2013-06-22T09:48:22-07:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://tech.riywo.com/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/
+        </loc>
+        <lastmod>2013-06-22T10:24:53-07:00</lastmod>
+    </url>
+    <url>
         <loc>http://tech.riywo.com/blog/archives/</loc>
-        <lastmod>2013-06-22T09:48:22-07:00</lastmod>
+        <lastmod>2013-06-22T10:24:53-07:00</lastmod>
     </url>
     <url>
         <loc>http://tech.riywo.com/</loc>
-        <lastmod>2013-06-22T09:48:22-07:00</lastmod>
+        <lastmod>2013-06-22T10:24:53-07:00</lastmod>
     </url>
     <url>
         <loc>http://tech.riywo.com/robots.txt</loc>

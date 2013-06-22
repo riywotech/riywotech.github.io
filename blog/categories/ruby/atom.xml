@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ruby | As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-06-22T09:49:44-07:00</updated>
+  <updated>2013-06-22T10:26:27-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -12,6 +12,53 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Using columns of a intermediate table with ActiveRecord has_many association]]></title>
+    <link href="http://tech.riywo.com/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/"/>
+    <updated>2013-06-22T09:51:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association</id>
+    <content type="html"><![CDATA[<p>I have n:m relation tables and want to use columns of the intermediate table.</p>
+
+<pre><code>activerecord (4.0.0.rc2)
+
+class User &lt; ActiveRecord::Base
+  has_many :user_bookmarks
+  has_many :bookmarks, through: :user_bookmarks
+end
+
+class UserBookmark &lt; ActiveRecord::Base
+  belongs_to :user
+  belongs_to :bookmark
+  # has column "star"
+end
+
+class Bookmark &lt; ActiveRecord::Base
+  has_many :user_bookmarks
+  has_many :users, through: :user_bookmarks
+end
+
+&gt; User.first.bookmarks.first.star
+NoMethodError: undefined method `star' for #&lt;Bookmark:0x007ff40e45a7b8&gt;
+</code></pre>
+
+<!-- more -->
+
+
+<p>I used a scope block for <code>has_many</code>.</p>
+
+<pre><code>class User &lt; ActiveRecord::Base
+  has_many :user_bookmarks
+  has_many :bookmarks, -&gt; { select("bookmarks.*, user_bookmarks.star") }, through: :user_bookmarks
+end
+
+&gt; User.first.bookmarks.first.star
+10
+</code></pre>
+
+<p>I&rsquo;m not sure whether this is the best way for the purpose, but it works.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[ruby-build --enable-load-relative]]></title>
