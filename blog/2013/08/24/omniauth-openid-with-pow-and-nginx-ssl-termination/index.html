@@ -1,0 +1,451 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>omniauth-openid with pow and nginx SSL termination - As a SW/Ops/DB Engineer</title>
+  <meta name="author" content="riywo">
+
+  
+  <meta name="description" content="I tried to use omniauth-openid with my new rails application. It worked when I developed using HTTP. After I started to develop with HTTPS, it failed &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tech.riywo.com/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="As a SW/Ops/DB Engineer" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">As a SW/Ops/DB Engineer</a></h1>
+  
+    <h2>riywo's technology memo</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tech.riywo.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Omniauth-openid With Pow and Nginx SSL Termination</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-24T16:14:00-07:00" pubdate data-updated="true">Aug 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I tried to use <code>omniauth-openid</code> with my new rails application. It worked when I developed using HTTP. After I started to develop with HTTPS, it failed. Finally I got the coolest workaround: <code>OmniAuth.config.full_host</code> and <code>X-Forwarded-Host/Port</code>.</p>
+
+<h2>My Environment</h2>
+
+<p>I use <code>Pow</code> for a development server. To use HTTPS with <code>Pow</code>, I installed <code>nginx</code> and configured like below.</p>
+
+<pre><code>server {
+    listen       443;
+    server_name  *.dev *.xip.io;
+
+    ssl                  on;
+    ssl_certificate      ssl/my.crt;
+    ssl_certificate_key  ssl/my.key;
+
+    ssl_session_timeout  5m;
+
+    ssl_protocols  SSLv2 SSLv3 TLSv1;
+    ssl_ciphers  HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers   on;
+
+    location / {
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto https;
+      proxy_redirect off;
+      proxy_pass http://127.0.0.1;
+      proxy_next_upstream error timeout invalid_header http_500 http_502 http_503;
+    }
+}
+</code></pre>
+
+<p>For authentication, I use <code>omniauth-openid</code> via <code>omniauth-google-apps</code> and <code>devise</code>.</p>
+
+<h3>config/initializers/devise.rb</h3>
+
+<pre><code>config.omniauth :google_apps, store: OpenID::Store::Filesystem.new('/tmp'), domain: ENV['GOOGLE_APPS_DOMAIN']
+</code></pre>
+
+<h3>app/controllers/users/omniauth_callbacks_controller.rb</h3>
+
+<pre><code>class Users::OmniauthCallbacksController &lt; Devise::OmniauthCallbacksController
+  skip_before_action :verify_authenticity_token
+
+  def google_apps
+      …
+</code></pre>
+
+<p>They worked if I access to <code>Pow</code> directly using HTTP.</p>
+
+<h2>What was the problem 1?</h2>
+
+<p>I guess all people using <code>omniauth-oauth2</code> behind a reverse proxy encounter &ldquo;Redirect uri mismatch&rdquo; error. Because <code>redirect_uri</code> query string parameter is like <code>https://myapp.127.0.0.1.xip.io:80/users/auth/github</code>. <code>:80</code> ?????</p>
+
+<p>And <code>omniauth-google-apps</code> didn&rsquo;t work neither. My browser tried to redirect to <code>https://myapp.127.0.0.1.xip.io:80/users/auth/google_apps/callback</code>…</p>
+
+<h3>Solution</h3>
+
+<p>Here is a simple workaround for this.</p>
+
+<ul>
+<li><a href="http://www.kbedell.com/2011/03/08/overriding-omniauth-callback-url-for-twitter-or-facebook-oath-processing/">Overriding the OmniAuth callback url for twitter or facebook oath processing. | Kevin Bedell on Internet Tech</a></li>
+</ul>
+
+
+<p>To simplify, I configured it as a string.</p>
+
+<pre><code>OmniAuth.config.full_host = "https://myapp.127.0.0.1.xip.io"
+</code></pre>
+
+<h2>What was the problem 2?</h2>
+
+<p>After that, when I accessed to <code>https://myapp.127.0.0.1.xip.io/users/auth/google_apps</code>, Google said:</p>
+
+<pre><code>Error: invalid_request
+Error in parsing the OpenID auth request.
+</code></pre>
+
+<p>The reason was a request query string parameter:</p>
+
+<pre><code>openid.realm:https://myapp.127.0.0.1.xip.io:80
+</code></pre>
+
+<p><code>:80</code> again… At this time, it came from <code>rack-openid</code> via <code>omniauth-openid</code>.</p>
+
+<p><a href="https://github.com/josh/rack-openid/blob/v1.3.1/lib/rack/openid.rb#L127">rack-openid/lib/rack/openid.rb at v1.3.1 · josh/rack-openid</a></p>
+
+<pre><code> oidreq.redirect_url(trust_root || realm_url(req), return_to || request_url, immediate)
+</code></pre>
+
+<p>At first, I applied a monkey patch to <code>omniauth-openid</code>:</p>
+
+<pre><code>--- a/lib/omniauth/strategies/open_id.rb
++++ b/lib/omniauth/strategies/open_id.rb
+@@ -32,6 +32,7 @@ module OmniAuth
+         lambda{|env| [401, {"WWW-Authenticate" =&gt; Rack::OpenID.build_header(
+           :identifier =&gt; identifier,
+           :return_to =&gt; callback_url,
++          :trust_root =&gt; full_host,
+           :required =&gt; options.required,
+           :optional =&gt; options.optional,
+           :method =&gt; 'post'
+</code></pre>
+
+<p>Then, <code>opened.realm</code> looked fine, but after the callback, OmniAuth said:</p>
+
+<pre><code>Could not authenticate you from GoogleApps because "Invalid credentials".
+</code></pre>
+
+<p>This was because <code>rack-openid</code> doesn&rsquo;t pay attention to <code>trust_root</code>.</p>
+
+<p><a href="https://github.com/josh/rack-openid/blob/v1.3.1/lib/rack/openid.rb#L145">rack-openid/lib/rack/openid.rb at v1.3.1 · josh/rack-openid</a></p>
+
+<pre><code>consumer.complete(flatten_params(req.params), req.url)
+</code></pre>
+
+<p>Then, I found another monkey patch for <code>Rack::Request</code>.</p>
+
+<ul>
+<li><a href="http://stackoverflow.com/questions/4051577/openid-for-rails-app-behind-apache/4331679#4331679">mod rewrite &ndash; OpenID for rails app behind Apache &ndash; Stack Overflow</a></li>
+</ul>
+
+
+<p>But this is not cool. I thought that <code>Rack::Request</code> must have a functionality to deal with HTTPS reverse proxy.</p>
+
+<p><a href="https://github.com/rack/rack/blob/1.5.2/lib/rack/request.rb#L96">rack/lib/rack/request.rb at 1.5.2 · rack/rack</a></p>
+
+<pre><code>def port
+  if port = host_with_port.split(/:/)[1]
+    port.to_i
+  elsif port = @env['HTTP_X_FORWARDED_PORT']
+    port.to_i
+  elsif @env.has_key?("HTTP_X_FORWARDED_HOST")
+    DEFAULT_PORTS[scheme]
+  else
+    @env["SERVER_PORT"].to_i
+  end
+end
+</code></pre>
+
+<p>YES!!!!!!!!!!!!!!!</p>
+
+<h3>Solution</h3>
+
+<p>I added <code>X-Forwarded-Host</code> on my <code>nginx.conf</code>, then it worked! Because I had already configured <code>X-Forwarded-Proto</code>.</p>
+
+<pre><code>proxy_set_header X-Forwarded-Host $host;
+</code></pre>
+
+<p>Or <code>X-Forwarded-Port</code> also worked.</p>
+
+<pre><code>proxy_set_header X-Forwarded-Port 443;
+</code></pre>
+
+<h2>Conclusion</h2>
+
+<p>If you use SSL termination(nginx, Apache, LB, etc.) with your application:</p>
+
+<ul>
+<li>You should use SSL termination for your development environment.
+
+<ul>
+<li>Otherwise, you will have some trouble between dev and prod…</li>
+</ul>
+</li>
+<li>You should pass much information using <code>X-Forwarded-*</code> headers.
+
+<ul>
+<li>Many libraries handle these headers better than you:)</li>
+</ul>
+</li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">riywo</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-24T16:14:00-07:00" pubdate data-updated="true">Aug 24<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/nginx/'>nginx</a>, <a class='category' href='/blog/categories/omniauth/'>omniauth</a>, <a class='category' href='/blog/categories/openid/'>openid</a>, <a class='category' href='/blog/categories/pow/'>pow</a>, <a class='category' href='/blog/categories/rack/'>rack</a>, <a class='category' href='/blog/categories/rails/'>rails</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tech.riywo.com/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination/" data-via="riywo" data-counturl="http://tech.riywo.com/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/" title="Previous Post: Using columns of a intermediate table with ActiveRecord has_many association">&laquo; Using columns of a intermediate table with ActiveRecord has_many association</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination/">omniauth-openid with pow and nginx SSL termination</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/">Using columns of a intermediate table with ActiveRecord has_many association</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/22/ruby-build-enable-load-relative/">ruby-build --enable-load-relative</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/18/git-rollback/">git rollback</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/11/anyenv/">anyenv</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/riywo">@riywo</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'riywo',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - riywo -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'riywotech';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://tech.riywo.com/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination/';
+        var disqus_url = 'http://tech.riywo.com/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

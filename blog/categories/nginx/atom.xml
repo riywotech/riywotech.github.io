@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: nginx | As a SW/Ops/DB Engineer]]></title>
+  <link href="http://tech.riywo.com/blog/categories/nginx/atom.xml" rel="self"/>
+  <link href="http://tech.riywo.com/"/>
+  <updated>2013-08-24T17:22:05-07:00</updated>
+  <id>http://tech.riywo.com/</id>
+  <author>
+    <name><![CDATA[riywo]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[omniauth-openid with pow and nginx SSL termination]]></title>
+    <link href="http://tech.riywo.com/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination/"/>
+    <updated>2013-08-24T16:14:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination</id>
+    <content type="html"><![CDATA[<p>I tried to use <code>omniauth-openid</code> with my new rails application. It worked when I developed using HTTP. After I started to develop with HTTPS, it failed. Finally I got the coolest workaround: <code>OmniAuth.config.full_host</code> and <code>X-Forwarded-Host/Port</code>.</p>
+
+<h2>My Environment</h2>
+
+<p>I use <code>Pow</code> for a development server. To use HTTPS with <code>Pow</code>, I installed <code>nginx</code> and configured like below.</p>
+
+<pre><code>server {
+    listen       443;
+    server_name  *.dev *.xip.io;
+
+    ssl                  on;
+    ssl_certificate      ssl/my.crt;
+    ssl_certificate_key  ssl/my.key;
+
+    ssl_session_timeout  5m;
+
+    ssl_protocols  SSLv2 SSLv3 TLSv1;
+    ssl_ciphers  HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers   on;
+
+    location / {
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto https;
+      proxy_redirect off;
+      proxy_pass http://127.0.0.1;
+      proxy_next_upstream error timeout invalid_header http_500 http_502 http_503;
+    }
+}
+</code></pre>
+
+<p>For authentication, I use <code>omniauth-openid</code> via <code>omniauth-google-apps</code> and <code>devise</code>.</p>
+
+<h3>config/initializers/devise.rb</h3>
+
+<pre><code>config.omniauth :google_apps, store: OpenID::Store::Filesystem.new('/tmp'), domain: ENV['GOOGLE_APPS_DOMAIN']
+</code></pre>
+
+<h3>app/controllers/users/omniauth_callbacks_controller.rb</h3>
+
+<pre><code>class Users::OmniauthCallbacksController &lt; Devise::OmniauthCallbacksController
+  skip_before_action :verify_authenticity_token
+
+  def google_apps
+      …
+</code></pre>
+
+<p>They worked if I access to <code>Pow</code> directly using HTTP.</p>
+
+<h2>What was the problem 1?</h2>
+
+<p>I guess all people using <code>omniauth-oauth2</code> behind a reverse proxy encounter &ldquo;Redirect uri mismatch&rdquo; error. Because <code>redirect_uri</code> query string parameter is like <code>https://myapp.127.0.0.1.xip.io:80/users/auth/github</code>. <code>:80</code> ?????</p>
+
+<p>And <code>omniauth-google-apps</code> didn&rsquo;t work neither. My browser tried to redirect to <code>https://myapp.127.0.0.1.xip.io:80/users/auth/google_apps/callback</code>…</p>
+
+<h3>Solution</h3>
+
+<p>Here is a simple workaround for this.</p>
+
+<ul>
+<li><a href="http://www.kbedell.com/2011/03/08/overriding-omniauth-callback-url-for-twitter-or-facebook-oath-processing/">Overriding the OmniAuth callback url for twitter or facebook oath processing. | Kevin Bedell on Internet Tech</a></li>
+</ul>
+
+
+<p>To simplify, I configured it as a string.</p>
+
+<pre><code>OmniAuth.config.full_host = "https://myapp.127.0.0.1.xip.io"
+</code></pre>
+
+<h2>What was the problem 2?</h2>
+
+<p>After that, when I accessed to <code>https://myapp.127.0.0.1.xip.io/users/auth/google_apps</code>, Google said:</p>
+
+<pre><code>Error: invalid_request
+Error in parsing the OpenID auth request.
+</code></pre>
+
+<p>The reason was a request query string parameter:</p>
+
+<pre><code>openid.realm:https://myapp.127.0.0.1.xip.io:80
+</code></pre>
+
+<p><code>:80</code> again… At this time, it came from <code>rack-openid</code> via <code>omniauth-openid</code>.</p>
+
+<p><a href="https://github.com/josh/rack-openid/blob/v1.3.1/lib/rack/openid.rb#L127">rack-openid/lib/rack/openid.rb at v1.3.1 · josh/rack-openid</a></p>
+
+<pre><code> oidreq.redirect_url(trust_root || realm_url(req), return_to || request_url, immediate)
+</code></pre>
+
+<p>At first, I applied a monkey patch to <code>omniauth-openid</code>:</p>
+
+<pre><code>--- a/lib/omniauth/strategies/open_id.rb
++++ b/lib/omniauth/strategies/open_id.rb
+@@ -32,6 +32,7 @@ module OmniAuth
+         lambda{|env| [401, {"WWW-Authenticate" =&gt; Rack::OpenID.build_header(
+           :identifier =&gt; identifier,
+           :return_to =&gt; callback_url,
++          :trust_root =&gt; full_host,
+           :required =&gt; options.required,
+           :optional =&gt; options.optional,
+           :method =&gt; 'post'
+</code></pre>
+
+<p>Then, <code>opened.realm</code> looked fine, but after the callback, OmniAuth said:</p>
+
+<pre><code>Could not authenticate you from GoogleApps because "Invalid credentials".
+</code></pre>
+
+<p>This was because <code>rack-openid</code> doesn&rsquo;t pay attention to <code>trust_root</code>.</p>
+
+<p><a href="https://github.com/josh/rack-openid/blob/v1.3.1/lib/rack/openid.rb#L145">rack-openid/lib/rack/openid.rb at v1.3.1 · josh/rack-openid</a></p>
+
+<pre><code>consumer.complete(flatten_params(req.params), req.url)
+</code></pre>
+
+<p>Then, I found another monkey patch for <code>Rack::Request</code>.</p>
+
+<ul>
+<li><a href="http://stackoverflow.com/questions/4051577/openid-for-rails-app-behind-apache/4331679#4331679">mod rewrite &ndash; OpenID for rails app behind Apache &ndash; Stack Overflow</a></li>
+</ul>
+
+
+<p>But this is not cool. I thought that <code>Rack::Request</code> must have a functionality to deal with HTTPS reverse proxy.</p>
+
+<p><a href="https://github.com/rack/rack/blob/1.5.2/lib/rack/request.rb#L96">rack/lib/rack/request.rb at 1.5.2 · rack/rack</a></p>
+
+<pre><code>def port
+  if port = host_with_port.split(/:/)[1]
+    port.to_i
+  elsif port = @env['HTTP_X_FORWARDED_PORT']
+    port.to_i
+  elsif @env.has_key?("HTTP_X_FORWARDED_HOST")
+    DEFAULT_PORTS[scheme]
+  else
+    @env["SERVER_PORT"].to_i
+  end
+end
+</code></pre>
+
+<p>YES!!!!!!!!!!!!!!!</p>
+
+<h3>Solution</h3>
+
+<p>I added <code>X-Forwarded-Host</code> on my <code>nginx.conf</code>, then it worked! Because I had already configured <code>X-Forwarded-Proto</code>.</p>
+
+<pre><code>proxy_set_header X-Forwarded-Host $host;
+</code></pre>
+
+<p>Or <code>X-Forwarded-Port</code> also worked.</p>
+
+<pre><code>proxy_set_header X-Forwarded-Port 443;
+</code></pre>
+
+<h2>Conclusion</h2>
+
+<p>If you use SSL termination(nginx, Apache, LB, etc.) with your application:</p>
+
+<ul>
+<li>You should use SSL termination for your development environment.
+
+<ul>
+<li>Otherwise, you will have some trouble between dev and prod…</li>
+</ul>
+</li>
+<li>You should pass much information using <code>X-Forwarded-*</code> headers.
+
+<ul>
+<li>Many libraries handle these headers better than you:)</li>
+</ul>
+</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
