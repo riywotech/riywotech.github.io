@@ -93,16 +93,19 @@
 
 <div class="entry-content"><p>I tried to use <code>omniauth-openid</code> with my new rails application. It worked when I developed using HTTP. After I started to develop with HTTPS, it failed. Finally I got the coolest workaround: <code>OmniAuth.config.full_host</code> and <code>X-Forwarded-Host/Port</code>.</p>
 
+<!-- more -->
+
+
 <h2>My Environment</h2>
 
 <p>I use <code>Pow</code> for a development server. To use HTTPS with <code>Pow</code>, I installed <code>nginx</code> and configured like below.</p>
 
 <pre><code>server {
-    listen       443;
+    listen     443;
     server_name  *.dev *.xip.io;
 
-    ssl                  on;
-    ssl_certificate      ssl/my.crt;
+    ssl               on;
+    ssl_certificate   ssl/my.crt;
     ssl_certificate_key  ssl/my.key;
 
     ssl_session_timeout  5m;
@@ -189,7 +192,7 @@ Error in parsing the OpenID auth request.
          lambda{|env| [401, {"WWW-Authenticate" =&gt; Rack::OpenID.build_header(
            :identifier =&gt; identifier,
            :return_to =&gt; callback_url,
-+          :trust_root =&gt; full_host,
++         :trust_root =&gt; full_host,
            :required =&gt; options.required,
            :optional =&gt; options.optional,
            :method =&gt; 'post'
