@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: github | As a SW/Ops/DB Engineer]]></title>
+  <link href="http://tech.riywo.com/blog/categories/github/atom.xml" rel="self"/>
+  <link href="http://tech.riywo.com/"/>
+  <updated>2013-09-04T22:38:08-07:00</updated>
+  <id>http://tech.riywo.com/</id>
+  <author>
+    <name><![CDATA[riywo]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[My Github Trends 2013-09-04]]></title>
+    <link href="http://tech.riywo.com/blog/2013/09/04/my-github-trends-2013-09-04/"/>
+    <updated>2013-09-04T22:19:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/09/04/my-github-trends-2013-09-04</id>
+    <content type="html"><![CDATA[<p>I love github. I introduce some github repositories from Today&rsquo;s trends or my recent starred. I will continuously post Github Trends every day hopefully…</p>
+
+<p>I read only README, so my impression must be useless, but I hope it will be a chance  for readers to know awesome github repositories.</p>
+
+<!-- more -->
+
+
+<h2><a href="https://github.com/nferraz/st">nferraz/st</a></h2>
+
+<p>This is a super simple CLI tool for statistics written in Perl. We, no more need awk, perl, ruby, python or any annoying one-liner.</p>
+
+<h2><a href="https://github.com/RichiH/vcsh">RichiH/vcsh</a></h2>
+
+<p>Most people upload their dotfiles into github. They must use this tool. You can manage your dotfiles and home directory using separate git repositories. Awesome.</p>
+
+<h2><a href="https://github.com/zunda/emoticommits">zunda/emoticommits</a></h2>
+
+<p>github commit with emoticon is cheerful work. The example map application is super cool!</p>
+
+<h2><a href="https://github.com/FredrikNoren/ungit">FredrikNoren/ungit</a></h2>
+
+<p>Excellent… The best local git repository management application. I usually use <code>tig</code>, but I will try this super awesome tool.</p>
+
+<hr />
+
+<p>See ya!</p>
+]]></content>
+  </entry>
+  
+</feed>
