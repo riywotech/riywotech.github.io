@@ -4,7 +4,7 @@
   <title><![CDATA[As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-09-04T22:38:08-07:00</updated>
+  <updated>2013-09-05T21:30:08-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -12,6 +12,43 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[my github trends 2013-09-05]]></title>
+    <link href="http://tech.riywo.com/blog/2013/09/05/my-github-trends-2013-09-05/"/>
+    <updated>2013-09-05T21:18:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/09/05/my-github-trends-2013-09-05</id>
+    <content type="html"><![CDATA[<h2><a href="https://github.com/maiha/typed">maiha/typed</a></h2>
+
+<p>Typed variable for ruby!</p>
+
+<h2><a href="https://github.com/Sirupsen/posix-mqueue">Sirupsen/posix-mqueue</a> &amp; <a href="https://github.com/Sirupsen/localjob">Sirupsen/localjob</a></h2>
+
+<p>Local host message queue using POSIX mqueue and delayed job. You don&rsquo;t have to run any daemon for queue store!</p>
+
+<h2><a href="https://github.com/ddollar/forego">ddollar/forego</a></h2>
+
+<p><code>foreman</code> written in Go! ddollar is an original author of <code>foreman</code>, so this is a real descendant of <code>foreman</code>.</p>
+
+<h2><a href="https://github.com/d2fn/gopack">d2fn/gopack</a></h2>
+
+<p>We can manage go libraries source and version using a simple config file like Bundler.</p>
+
+<h2><a href="https://github.com/rogerwang/node-webkit">rogerwang/node-webkit</a></h2>
+
+<p>We can write an desktop application using HTML5, CSS, JS and WebGL!</p>
+
+<h2><a href="https://github.com/paralect/robomongo">paralect/robomongo</a></h2>
+
+<p>MongoDB management GUI application. Beautiful…</p>
+
+<hr />
+
+<p>Today&rsquo;s my best: node-webkit</p>
+
+<p>Love github!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[My Github Trends 2013-09-04]]></title>
