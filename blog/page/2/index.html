@@ -9,7 +9,7 @@
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="前置きというか能書き アプリ作りたいですよね、アプリ。今日なんか作れないかなーと思って妄想してました。昨日こういうアプリを見かけて、 iOSデバイスを画面に重ね合わせるだけでファイルの送受信ができる『PutOn Mac』 &ndash; Macの手書き説明書 なるほど、もうTCP/ &hellip;">
+  <meta name="description" content="以前からたまーにこういうのがあるとうれしいケースがあるなぁと思ってたので作りました。 riywo/fcache · GitHub どういうものかというと、こういう感じで何かstdoutに吐き出すコマンドの前にfcache EXPIRE_SECというのを付け足して実行すると、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,66 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/10/fcache-file-cache-for-parallel-processes/">Fcache - File Cache for Parallel Processes</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-10T01:46:00-07:00" pubdate data-updated="true">May 10<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>以前からたまーにこういうのがあるとうれしいケースがあるなぁと思ってたので作りました。</p>
+
+<ul>
+<li><a href="https://github.com/riywo/fcache">riywo/fcache · GitHub</a></li>
+</ul>
+
+
+<p>どういうものかというと、こういう感じで何かstdoutに吐き出すコマンドの前に<code>fcache EXPIRE_SEC</code>というのを付け足して実行すると、初回はコマンドを実行して結果をファイルに保存しつつstdoutにも出力します。</p>
+
+<pre><code>$ fcache 10 curl -s example.com
+hoge
+</code></pre>
+
+<p>次に、同じ<code>fcache</code>コマンドを叩くと、保存されているキャッシュファイルの時刻を見て、expire時刻を過ぎてなければ単にそのファイルの中身をstdoutに吐き出して終了します。</p>
+
+<pre><code>$ fcache 10 curl -s example.com # 実際はcurlは実行されない
+hoge
+</code></pre>
+
+<p>expire時刻を過ぎていれば初回と同じ動きをしてキャッシュを更新してくれます。<code>flock</code>を使って、読み込みだけなら共有ロックで並列に、書き込みが発生する時には排他ロック、みたいな処理をしてます(が何分まともな排他制御書いたことないのできっとバグってます。。。)</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/05/10/fcache-file-cache-for-parallel-processes/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -491,57 +551,9 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/16/test-entry/">Tech Blog始めました&ブログの始め方</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-16T22:51:00-07:00" pubdate data-updated="true">Apr 16<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>このエントリを読んで、そういえば最近全くアウトプットができていないことにはたと気づきました。@sunaot++</p>
-
-<p><a href="http://sunaot.tumblr.com/post/48053101279/4">4 月にエンジニアとなった人たちに知っておいてもらいたいこと</a></p>
-
-<p>というわけで、「そうだ、ブログを書こう」となりました。メインのブログの方で書いてもいいんですが、なんとなく技術寄りのものは別にまとめてみたいなぁと思って、最近流行りのOctopress+Github Pagesで作ってみました。このブログの作り方を共有するところからまずは出発しようかと思います。</p>
-
-<ul>
-<li><a href="http://tech.riywo.com/">As a SW/Ops/DB Engineer</a></li>
-</ul>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/04/16/test-entry/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/3/">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -554,6 +566,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/27/mesos-introduction-1/">mesos introduction 1</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/09/08/private-paas/">Private PaaS</a>
@@ -569,10 +585,6 @@
     
       <li class="post">
         <a href="/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination/">omniauth-openid with pow and nginx SSL termination</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/">Using columns of a intermediate table with ActiveRecord has_many association</a>
       </li>
     
   </ul>

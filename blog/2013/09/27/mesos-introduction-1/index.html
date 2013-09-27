@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Yet Another shell script - As a SW/Ops/DB Engineer</title>
+  <title>mesos introduction 1 - As a SW/Ops/DB Engineer</title>
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="How about such an alternative shell script? I will try to implement this in ruby for POC. P.S. Here is a draft written by @okitan, awesome! ">
+  <meta name="description" content="Today, Mesosphere released an important milestone. I really desired this integration. Mesosphere · Docker on Mesos Now, we can manage our &ldquo; &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tech.riywo.com/blog/2013/04/19/yet-another-shell-script">
+  <link rel="canonical" href="http://tech.riywo.com/blog/2013/09/27/mesos-introduction-1">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="As a SW/Ops/DB Engineer" type="application/atom+xml">
@@ -68,7 +68,7 @@
   
   <header>
     
-      <h1 class="entry-title">Yet Another Shell Script</h1>
+      <h1 class="entry-title">Mesos Introduction 1</h1>
     
     
       <p class="meta">
@@ -84,30 +84,134 @@
   
 
 
-<time datetime="2013-04-19T14:54:00-07:00" pubdate data-updated="true">Apr 19<span>th</span>, 2013</time>
+<time datetime="2013-09-27T00:53:00-07:00" pubdate data-updated="true">Sep 27<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>How about such an alternative shell script?</p>
+<div class="entry-content"><p>Today, Mesosphere released an important milestone. I really desired this integration.</p>
+
+<ul>
+<li><a href="http://mesosphere.io/2013/09/26/docker-on-mesos/">Mesosphere · Docker on Mesos</a></li>
+</ul>
+
+
+<p>Now, we can manage our &ldquo;Computers as an OS&rdquo;.</p>
+
+<ul>
+<li>Kernel
+
+<ul>
+<li><a href="http://mesos.apache.org/">Mesos</a></li>
+</ul>
+</li>
+<li>Process
+
+<ul>
+<li><a href="https://www.docker.io/">Docker</a></li>
+</ul>
+</li>
+<li>Init
+
+<ul>
+<li><a href="https://github.com/mesosphere/marathon">Marathon</a></li>
+</ul>
+</li>
+<li>Cron
+
+<ul>
+<li><a href="https://github.com/airbnb/chronos">Chronos</a></li>
+</ul>
+</li>
+</ul>
+
 
 <!-- more -->
 
 
+<p>I would like to learn this new generation &ldquo;OS&rdquo;, so I started to play with Mesos. Mesosphere is a great company and they built packages of Mesos and Marathon. Building Mesos and tools are most painful part of this ecosystem, but now we can super easily start to use Mesos and Marathon. Thanks, Mesosphere:)</p>
+
+<p>I use AWS for Mesos cluster. At first, I created a m1.small instance for a master of Mesos, Zookeeper and Marathon. I use EC2-Classic.</p>
+
+<ul>
+<li>AMI
+
+<ul>
+<li>Ubuntu Server 13.04</li>
+</ul>
+</li>
+<li>Security Group
+
+<ul>
+<li>From any src IP
+
+<ul>
+<li>22(ssh)</li>
+<li>2181(zk)</li>
+<li>5050(mesos master)</li>
+<li>5051(mesos slave)</li>
+<li>8080(marathon)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
 
-<script src="https://gist.github.com/riywo/5423408.js"></script>
+<p>And I set user-data as an initial setup script:</p>
 
+<pre><code>#!/bin/bash
+curl -fL https://raw.github.com/mesosphere/mesos-docker/master/bin/mesos-docker-setup | bash
+echo manual &gt;&gt; /etc/init/mesos-slave.conf
+reboot
+</code></pre>
 
-<p>I will try to implement this in ruby for POC.</p>
+<p>After the instance is ready, you can access Mesos(5050) and Marathon(8080) from your browser. I associated an EIP to the master.</p>
 
-<h3>P.S.</h3>
+<p>Then, I requested 10 spot instances for slaves. Same type(m1.small), same AMI, same security group, and user-data:</p>
 
-<p>Here is a draft written by @okitan, awesome!</p>
+<pre><code>#!/bin/bash
+curl -fL https://raw.github.com/mesosphere/mesos-docker/master/bin/mesos-docker-setup | bash
+echo manual &gt;&gt; /etc/init/mesos-master.conf
+echo manual &gt;&gt; /etc/init/marathon.conf
+echo manual &gt;&gt; /etc/init/zookeeper.conf
+echo 'zk://YOUR_MASTER_EIP:2181/mesos' &gt; /etc/mesos/zk
+reboot
+</code></pre>
 
-<script src="https://gist.github.com/okitan/5423791.js"></script>
+<p>After a while, you can see 10 slaves, 10 CPUs and 6GB Mem on your Mesos dashboard! Wow! This is your new &ldquo;OS&rdquo;!</p>
+
+<p>Now you can run ANY process using Mesosphere&rsquo;s Mesos, Marathon and Docker integration. Why don&rsquo;t you request Redis processes to your Marathon?</p>
+
+<pre><code>$ http POST http://YOUR_MASTER_EIP:8080/v1/apps/start \
+          id=multidis instances=2 mem=512 cpus=0.5 \
+          executor=/var/lib/mesos/executors/docker \
+          cmd='johncosta/redis'
+</code></pre>
+
+<p>This request will start 2 tasks and use 1 CPU and 1GB Mem. You can scale it very easily. Awesome…, awesome…</p>
+
+<h2>Next step</h2>
+
+<ul>
+<li>Build Chronos</li>
+<li>Run Chronos on Marathon</li>
+<li>Create Docker image and run it on Marathon</li>
+<li>Integration with <a href="https://github.com/coreos/etcd">etcd</a>, or something
+
+<ul>
+<li>Configuration of 12factor app</li>
+</ul>
+</li>
+<li>Integration with <a href="http://ceph.com/">Ceph</a> or other storage
+
+<ul>
+<li>For virtual storage</li>
+</ul>
+</li>
+</ul>
 
 </div>
 
@@ -131,12 +235,12 @@
   
 
 
-<time datetime="2013-04-19T14:54:00-07:00" pubdate data-updated="true">Apr 19<span>th</span>, 2013</time>
+<time datetime="2013-09-27T00:53:00-07:00" pubdate data-updated="true">Sep 27<span>th</span>, 2013</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/shell/'>shell</a>
+    <a class='category' href='/blog/categories/docker/'>docker</a>, <a class='category' href='/blog/categories/marathon/'>marathon</a>, <a class='category' href='/blog/categories/mesos/'>mesos</a>
   
 </span>
 
@@ -145,7 +249,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tech.riywo.com/blog/2013/04/19/yet-another-shell-script/" data-via="riywo" data-counturl="http://tech.riywo.com/blog/2013/04/19/yet-another-shell-script/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tech.riywo.com/blog/2013/09/27/mesos-introduction-1/" data-via="riywo" data-counturl="http://tech.riywo.com/blog/2013/09/27/mesos-introduction-1/" >Tweet</a>
   
   
   
@@ -156,10 +260,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/04/18/ec2-zabbix/" title="Previous Post: ec2-zabbix - setup zabbix on EC2">&laquo; ec2-zabbix - setup zabbix on EC2</a>
+        <a class="basic-alignment left" href="/blog/2013/09/08/private-paas/" title="Previous Post: Private PaaS">&laquo; Private PaaS</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/04/19/python-mox-example/" title="Next Post: python mox example">python mox example &raquo;</a>
       
     </p>
   </footer>
@@ -254,8 +356,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://tech.riywo.com/blog/2013/04/19/yet-another-shell-script/';
-        var disqus_url = 'http://tech.riywo.com/blog/2013/04/19/yet-another-shell-script/';
+        var disqus_identifier = 'http://tech.riywo.com/blog/2013/09/27/mesos-introduction-1/';
+        var disqus_url = 'http://tech.riywo.com/blog/2013/09/27/mesos-introduction-1/';
         var disqus_script = 'embed.js';
       
     (function () {

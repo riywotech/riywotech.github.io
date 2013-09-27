@@ -9,11 +9,7 @@
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="作りたいなーと漠然と思ってるアイデア。自分用メモなので色々省略してますので、興味ある人がいれば詳しく話します。 基本コンセプト Herokuライクなデプロイ
-壊れにくい
-開発が運用コスト管理 技術トピック 12factor
-Docker
-Mesos ">
+  <meta name="description" content="Today, Mesosphere released an important milestone. I really desired this integration. Mesosphere · Docker on Mesos Now, we can manage our &ldquo; &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -69,6 +65,82 @@ Mesos ">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/09/27/mesos-introduction-1/">Mesos Introduction 1</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-27T00:53:00-07:00" pubdate data-updated="true">Sep 27<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Today, Mesosphere released an important milestone. I really desired this integration.</p>
+
+<ul>
+<li><a href="http://mesosphere.io/2013/09/26/docker-on-mesos/">Mesosphere · Docker on Mesos</a></li>
+</ul>
+
+
+<p>Now, we can manage our &ldquo;Computers as an OS&rdquo;.</p>
+
+<ul>
+<li>Kernel
+
+<ul>
+<li><a href="http://mesos.apache.org/">Mesos</a></li>
+</ul>
+</li>
+<li>Process
+
+<ul>
+<li><a href="https://www.docker.io/">Docker</a></li>
+</ul>
+</li>
+<li>Init
+
+<ul>
+<li><a href="https://github.com/mesosphere/marathon">Marathon</a></li>
+</ul>
+</li>
+<li>Cron
+
+<ul>
+<li><a href="https://github.com/airbnb/chronos">Chronos</a></li>
+</ul>
+</li>
+</ul>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/09/27/mesos-introduction-1/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -533,66 +605,6 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/10/fcache-file-cache-for-parallel-processes/">Fcache - File Cache for Parallel Processes</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-10T01:46:00-07:00" pubdate data-updated="true">May 10<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>以前からたまーにこういうのがあるとうれしいケースがあるなぁと思ってたので作りました。</p>
-
-<ul>
-<li><a href="https://github.com/riywo/fcache">riywo/fcache · GitHub</a></li>
-</ul>
-
-
-<p>どういうものかというと、こういう感じで何かstdoutに吐き出すコマンドの前に<code>fcache EXPIRE_SEC</code>というのを付け足して実行すると、初回はコマンドを実行して結果をファイルに保存しつつstdoutにも出力します。</p>
-
-<pre><code>$ fcache 10 curl -s example.com
-hoge
-</code></pre>
-
-<p>次に、同じ<code>fcache</code>コマンドを叩くと、保存されているキャッシュファイルの時刻を見て、expire時刻を過ぎてなければ単にそのファイルの中身をstdoutに吐き出して終了します。</p>
-
-<pre><code>$ fcache 10 curl -s example.com # 実際はcurlは実行されない
-hoge
-</code></pre>
-
-<p>expire時刻を過ぎていれば初回と同じ動きをしてキャッシュを更新してくれます。<code>flock</code>を使って、読み込みだけなら共有ロックで並列に、書き込みが発生する時には排他ロック、みたいな処理をしてます(が何分まともな排他制御書いたことないのできっとバグってます。。。)</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/05/10/fcache-file-cache-for-parallel-processes/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -608,6 +620,10 @@ hoge
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/27/mesos-introduction-1/">mesos introduction 1</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/08/private-paas/">Private PaaS</a>
       </li>
     
@@ -621,10 +637,6 @@ hoge
     
       <li class="post">
         <a href="/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination/">omniauth-openid with pow and nginx SSL termination</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/">Using columns of a intermediate table with ActiveRecord has_many association</a>
       </li>
     
   </ul>
