@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: service - As a SW/Ops/DB Engineer</title>
+  <title>mesos tutorial 2 - As a SW/Ops/DB Engineer</title>
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="Category: service">
+  <meta name="description" content="In the pervious post, I tried &ldquo;cpu = 0.1&rdquo; for Mesos tasks. But it didn&rsquo;t work precisely. If you have only one cpu on each slave &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tech.riywo.comblog/categories/service">
+  <link rel="canonical" href="http://tech.riywo.com/blog/2013/09/28/mesos-tutorial-2">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="As a SW/Ops/DB Engineer" type="application/atom+xml">
@@ -64,36 +64,116 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: Service</h1>
+    
+      <h1 class="entry-title">Mesos Tutorial 2</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-28T00:02:00-07:00" pubdate data-updated="true">Sep 28<span>th</span>, 2013</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content"><p>In the pervious post, I tried &ldquo;cpu = 0.1&rdquo; for Mesos tasks. But it didn&rsquo;t work precisely. If you have only one cpu on each slave server, you can run only one task on each slave at the same time even if you specify &ldquo;cpu = 0.1&rdquo; for the tasks.</p>
 
-  
-  <h2>2013</h2>
+<p>It only happens on the slave which has just one cpu. If a slave has more than one cpus, it can run tasks more than the number of cpus. I use m1.small and it has only one cpu, unfortunately…</p>
 
-<article>
-  
-<h1><a href="/blog/2013/05/07/sonic-notify-a-real-broadcasting/">Sonic Notify - a real broadcasting</a></h1>
-<time datetime="2013-05-07T21:57:00-07:00" pubdate><span class='month'>May</span> <span class='day'>07</span> <span class='year'>2013</span></time>
+<p>So, I changed Mesosphere&rsquo;s runner script a little to configure <code>--resources</code> flag of <code>mesos-slave</code>.</p>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/android/'>android</a>, <a class='category' href='/blog/categories/ios/'>iOS</a>, <a class='category' href='/blog/categories/service/'>service</a>, <a class='category' href='/blog/categories/sound/'>sound</a></span>
-</footer>
+<pre><code>/usr/bin/mesos-init-wrapper
+@@ -22,6 +22,7 @@
+   [[ ! ${ULIMIT:-} ]] || ulimit $ULIMIT
+   [[ ! ${MASTER:-} ]] || args+=( --master="$MASTER" )
+   [[ ! ${LOGS:-} ]]   || args+=( --log_dir="$LOGS" )
++  [[ ! ${RESOURCES:-} ]] || args+=( --resources="$RESOURCES" )
+   logged /usr/local/sbin/mesos-slave "${args[@]}"
+ }
+</code></pre>
 
+<p>And set more cpus.</p>
 
-</article>
+<pre><code>$ cat /etc/default/mesos-slave
+MASTER=`cat /etc/mesos/zk`
+RESOURCES="cpus:2"
+</code></pre>
 
+<p>Now you can see 2 cpus in your Mesos cluster, then you can run more than 2 tasks on it at the same time.</p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">riywo</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-28T00:02:00-07:00" pubdate data-updated="true">Sep 28<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/mesos/'>mesos</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tech.riywo.com/blog/2013/09/28/mesos-tutorial-2/" data-via="riywo" data-counturl="http://tech.riywo.com/blog/2013/09/28/mesos-tutorial-2/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/09/27/mesos-introduction-1/" title="Previous Post: mesos introduction 1">&laquo; mesos introduction 1</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -177,7 +257,10 @@
       var disqus_shortname = 'riywotech';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://tech.riywo.com/blog/2013/09/28/mesos-tutorial-2/';
+        var disqus_url = 'http://tech.riywo.com/blog/2013/09/28/mesos-tutorial-2/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

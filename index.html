@@ -9,7 +9,7 @@
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="Today, Mesosphere released an important milestone. I really desired this integration. Mesosphere · Docker on Mesos Now, we can manage our &ldquo; &hellip;">
+  <meta name="description" content="In the pervious post, I tried &ldquo;cpu = 0.1&rdquo; for Mesos tasks. But it didn&rsquo;t work precisely. If you have only one cpu on each slave &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,65 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/09/28/mesos-tutorial-2/">Mesos Tutorial 2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-28T00:02:00-07:00" pubdate data-updated="true">Sep 28<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>In the pervious post, I tried &ldquo;cpu = 0.1&rdquo; for Mesos tasks. But it didn&rsquo;t work precisely. If you have only one cpu on each slave server, you can run only one task on each slave at the same time even if you specify &ldquo;cpu = 0.1&rdquo; for the tasks.</p>
+
+<p>It only happens on the slave which has just one cpu. If a slave has more than one cpus, it can run tasks more than the number of cpus. I use m1.small and it has only one cpu, unfortunately…</p>
+
+<p>So, I changed Mesosphere&rsquo;s runner script a little to configure <code>--resources</code> flag of <code>mesos-slave</code>.</p>
+
+<pre><code>/usr/bin/mesos-init-wrapper
+@@ -22,6 +22,7 @@
+   [[ ! ${ULIMIT:-} ]] || ulimit $ULIMIT
+   [[ ! ${MASTER:-} ]] || args+=( --master="$MASTER" )
+   [[ ! ${LOGS:-} ]]   || args+=( --log_dir="$LOGS" )
++  [[ ! ${RESOURCES:-} ]] || args+=( --resources="$RESOURCES" )
+   logged /usr/local/sbin/mesos-slave "${args[@]}"
+ }
+</code></pre>
+
+<p>And set more cpus.</p>
+
+<pre><code>$ cat /etc/default/mesos-slave
+MASTER=`cat /etc/mesos/zk`
+RESOURCES="cpus:2"
+</code></pre>
+
+<p>Now you can see 2 cpus in your Mesos cluster, then you can run more than 2 tasks on it at the same time.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -557,54 +616,6 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/13/provisioning-itself/">Provisioning Itself</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-13T19:15:00-07:00" pubdate data-updated="true">May 13<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>これ読んで思ったこと。</p>
-
-<ul>
-<li><a href="http://d.hatena.ne.jp/mizchi/20130512/1368351397">プログラミングはそれ自体が目的であっていい &ndash; mizchi log</a></li>
-</ul>
-
-
-<p>全く同じ所感を、昨今のserver provisioningブームやクラウド万歳を見てて思う。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/05/13/provisioning-itself/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -620,6 +631,10 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/28/mesos-tutorial-2/">mesos tutorial 2</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/27/mesos-introduction-1/">mesos introduction 1</a>
       </li>
     
@@ -633,10 +648,6 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
     
       <li class="post">
         <a href="/blog/2013/09/04/my-github-trends-2013-09-04/">My Github Trends 2013-09-04</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination/">omniauth-openid with pow and nginx SSL termination</a>
       </li>
     
   </ul>
