@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mesos | As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/blog/categories/mesos/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-09-28T00:55:06-07:00</updated>
+  <updated>2013-09-29T11:44:02-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -12,6 +12,69 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[mesos tutorial 3]]></title>
+    <link href="http://tech.riywo.com/blog/2013/09/29/mesos-tutorial-3/"/>
+    <updated>2013-09-29T10:24:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/09/29/mesos-tutorial-3</id>
+    <content type="html"><![CDATA[<p>To understand development of Mesos Framework, I developed a simple <strong>useless</strong> framework example called <code>msh</code>.</p>
+
+<ul>
+<li><a href="https://github.com/riywo/msh">riywo/msh</a></li>
+</ul>
+
+
+<!-- more -->
+
+
+<h2>Usage</h2>
+
+<p>At first, you should distribute this directory to the all slaves on the same location.</p>
+
+<p>Then, you can run <code>msh</code> command on any server. For example:</p>
+
+<pre><code>$ cat /etc/hosts | ./msh -- cat -n 2&gt;/dev/null
+     1  127.0.0.1 localhost
+     2
+     3  # The following lines are desirable for IPv6 capable hosts
+     4  ::1 ip6-localhost ip6-loopback
+     5  fe00::0 ip6-localnet
+     6  ff00::0 ip6-mcastprefix
+     7  ff02::1 ip6-allnodes
+     8  ff02::2 ip6-allrouters
+     9  ff02::3 ip6-allhosts
+</code></pre>
+
+<h2>Internal</h2>
+
+<ul>
+<li><code>msh</code> launches a <code>msh-executor</code> using one of resource offers</li>
+<li><code>msh-executor</code> starts the given command as a subprocess</li>
+<li><code>msh</code> reads its stdin and send the input to the slave as FrameworkMessage</li>
+<li><code>msh-executor</code> receives messages and write them to the subprocess.stdin</li>
+<li><code>msh-executor</code> reads the subprocess.stdout and sends the output to <code>msh</code> as FrameworkMessage</li>
+<li>Each other sends a message &lsquo;EOF&rsquo; as a signal of end of the pipe</li>
+<li><code>msh</code> prints received message</li>
+</ul>
+
+
+<h2>TODO</h2>
+
+<ul>
+<li>work with no stdin</li>
+<li>streaming pipe</li>
+<li>pipe multiple tasks like UNIX shell</li>
+<li>interactive shell</li>
+<li>error handling</li>
+</ul>
+
+
+<h2>Conclusion</h2>
+
+<p>Development of Mesos framework in Python is very easy. I hope this toy project is useful for someone who is interested in Mesos.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[mesos tutorial 2]]></title>

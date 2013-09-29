@@ -4,7 +4,7 @@
   <title><![CDATA[As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-09-28T00:55:06-07:00</updated>
+  <updated>2013-09-29T11:44:02-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -12,6 +12,69 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[mesos tutorial 3]]></title>
+    <link href="http://tech.riywo.com/blog/2013/09/29/mesos-tutorial-3/"/>
+    <updated>2013-09-29T10:24:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/09/29/mesos-tutorial-3</id>
+    <content type="html"><![CDATA[<p>To understand development of Mesos Framework, I developed a simple <strong>useless</strong> framework example called <code>msh</code>.</p>
+
+<ul>
+<li><a href="https://github.com/riywo/msh">riywo/msh</a></li>
+</ul>
+
+
+<!-- more -->
+
+
+<h2>Usage</h2>
+
+<p>At first, you should distribute this directory to the all slaves on the same location.</p>
+
+<p>Then, you can run <code>msh</code> command on any server. For example:</p>
+
+<pre><code>$ cat /etc/hosts | ./msh -- cat -n 2&gt;/dev/null
+     1  127.0.0.1 localhost
+     2
+     3  # The following lines are desirable for IPv6 capable hosts
+     4  ::1 ip6-localhost ip6-loopback
+     5  fe00::0 ip6-localnet
+     6  ff00::0 ip6-mcastprefix
+     7  ff02::1 ip6-allnodes
+     8  ff02::2 ip6-allrouters
+     9  ff02::3 ip6-allhosts
+</code></pre>
+
+<h2>Internal</h2>
+
+<ul>
+<li><code>msh</code> launches a <code>msh-executor</code> using one of resource offers</li>
+<li><code>msh-executor</code> starts the given command as a subprocess</li>
+<li><code>msh</code> reads its stdin and send the input to the slave as FrameworkMessage</li>
+<li><code>msh-executor</code> receives messages and write them to the subprocess.stdin</li>
+<li><code>msh-executor</code> reads the subprocess.stdout and sends the output to <code>msh</code> as FrameworkMessage</li>
+<li>Each other sends a message &lsquo;EOF&rsquo; as a signal of end of the pipe</li>
+<li><code>msh</code> prints received message</li>
+</ul>
+
+
+<h2>TODO</h2>
+
+<ul>
+<li>work with no stdin</li>
+<li>streaming pipe</li>
+<li>pipe multiple tasks like UNIX shell</li>
+<li>interactive shell</li>
+<li>error handling</li>
+</ul>
+
+
+<h2>Conclusion</h2>
+
+<p>Development of Mesos framework in Python is very easy. I hope this toy project is useful for someone who is interested in Mesos.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[mesos tutorial 2]]></title>
@@ -1336,88 +1399,6 @@ web3&gt; tail -F access_log | sed -e 's/^/web3 /' | nc mon 10000
 <p>Comparing languages with each other is so interesting that I need more languages:)</p>
 
 <p>cf. <a href="http://weblog.riywo.com/todo">TODO</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[multiple assignment from regexp]]></title>
-    <link href="http://tech.riywo.com/blog/2013/04/17/multiple-assignment-from-regexp/"/>
-    <updated>2013-04-17T18:22:00-07:00</updated>
-    <id>http://tech.riywo.com/blog/2013/04/17/multiple-assignment-from-regexp</id>
-    <content type="html"><![CDATA[<p>Sometimes I want to assign multiple variables from results of regexp matching. Here are the ways in some LLs.</p>
-
-<!-- more -->
-
-
-<h3>Perl</h3>
-
-<pre><code>my ($a, $b) = ("a:1 b:2" =~ /a:(\d) b:(\d)/);
-# or
-my ($a, $b) = "a:1 b:2" =~ /a:(\d) b:(\d)/;
-</code></pre>
-
-<h3>Ruby</h3>
-
-<pre><code>a, b = "a:1 b:2".match(/a:(\d) b:(\d)/) {[$1, $2]}
-# or
-a, b = "a:1 b:2".match(/a:(\d) b:(\d)/).to_a[1, 2]
-</code></pre>
-
-<h3>Python</h3>
-
-<pre><code>import re
-a, b = re.match(r'a:(\d) b:(\d)', "a:1 b:2").group(1, 2)
-</code></pre>
-
-<h2>Conclusion</h2>
-
-<ul>
-<li>Perl
-
-<ul>
-<li>simplest</li>
-<li>needs parentheses for multiple assignment
-
-<ul>
-<li>parentheses for matching are not mandatory, though</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Ruby
-
-<ul>
-<li><code>match</code> is a method of <code>String</code> class</li>
-<li>give a block or slice an array</li>
-</ul>
-</li>
-<li>Python
-
-<ul>
-<li>needs <code>re</code> module</li>
-<li><code>match</code> is a method of <code>re</code></li>
-</ul>
-</li>
-</ul>
-
-
-<p>Enjoy!</p>
-
-<hr />
-
-<p>簡単にファイルをパースしたい時とかに、Perlで書いた正規表現でさくっと変数に多重代入したりしてたんですが、Ruby/Pythonだとどうやるのか分からなかったのでまとめ。Thanks to @_shimada, @methane, @kyoendo, @toku_bass</p>
-
-<p>namedcapture版も作ってみたい。というかそもそもオレオレLL比較チートシート作りたい。</p>
-
-<ul>
-<li>参考
-
-<ul>
-<li><a href="http://0xcc.net/blog/archives/000137.html">文字列操作の比較表: Ruby, Python, JavaScript, Perl, C++ &ndash; bkブログ</a></li>
-</ul>
-</li>
-</ul>
-
 ]]></content>
   </entry>
   
