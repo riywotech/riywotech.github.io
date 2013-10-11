@@ -4,7 +4,7 @@
   <title><![CDATA[Category: linux | As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-09-29T11:44:02-07:00</updated>
+  <updated>2013-10-11T13:08:45-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -12,6 +12,52 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[chown with user's default group]]></title>
+    <link href="http://tech.riywo.com/blog/2013/10/11/chown-with-users-default-group/"/>
+    <updated>2013-10-11T12:55:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/10/11/chown-with-users-default-group</id>
+    <content type="html"><![CDATA[<p>You may have used <code>chown</code> command to change the ownership of files or directories like below.</p>
+
+<pre><code>$ ls -l file
+-rw-r--r--  1 root root  675 2013-09-23 23:23 file
+$ sudo chown foo file
+$ ls -l file
+-rw-r--r--  1 foo root  675 2013-09-23 23:23 file
+</code></pre>
+
+<p>But this is not good because group of <code>file</code> is still <code>root</code>. Most case, you want to set it the default(login) group of the user.</p>
+
+<pre><code>$ id foo
+uid=1010(foo) gid=1009(foo) groups=1009(foo)
+</code></pre>
+
+<p>In this case, you want to set it <code>foo</code>. For that, I used a command below.</p>
+
+<pre><code>$ chown foo:foo file
+$ ls -l file
+-rw-r--r--  1 foo foo  675 2013-09-23 23:23 file
+</code></pre>
+
+<p>Not bad. But you have to know the default group of the user. It is not always same as the user name.</p>
+
+<!-- more -->
+
+
+<p>So, here is the best way. Just add <code>:</code> after the user name.</p>
+
+<pre><code>$ sudo chown foo: file
+$ ls -l file
+-rw-r--r--  1 foo foo  675 2013-09-23 23:23 file
+</code></pre>
+
+<p>Wow! This is super easy. See also <code>man chmod</code></p>
+
+<pre><code>… If a colon but no group name follows the user name, that user is made the owner of the files and the group of the files is changed to that user's login group. …
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[fcache - file cache for parallel processes]]></title>
@@ -305,105 +351,6 @@ web3&gt; tail -F access_log | sed -e 's/^/web3 /' | nc mon 10000
 <h2>Conclusion</h2>
 
 <p>Let&rsquo;s try zabbix in your EC2 environment!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Awesome Docker!そして環境管理について思うところ]]></title>
-    <link href="http://tech.riywo.com/blog/2013/04/17/awesome-docker/"/>
-    <updated>2013-04-17T01:16:00-07:00</updated>
-    <id>http://tech.riywo.com/blog/2013/04/17/awesome-docker</id>
-    <content type="html"><![CDATA[<p>最近個人プロダクトでやってたことは、</p>
-
-<ul>
-<li><a href="https://github.com/riywo/myroku-cookbooks">Myroku</a>
-
-<ul>
-<li>private PaaS</li>
-<li>社内とかで自由にHerokuっぽいことやりたい</li>
-</ul>
-</li>
-<li><a href="https://github.com/riywo/pandler">Pandler</a>
-
-<ul>
-<li>package isolation</li>
-<li>rpmを完璧に管理した環境を作りたい</li>
-</ul>
-</li>
-</ul>
-
-
-<p>みたいな感じなんですが、一人でスキマ時間で頑張ってたものなのでクオリティは最低ですし、全然完成しませんでした。本当に作る才能がない。</p>
-
-<p>というところで、ネットサーフィンしてたら、最近dotCloudがDockerというのをOSSで出したということを知りました。</p>
-
-<ul>
-<li><a href="http://www.docker.io/">Docker &ndash; the Linux container runtime</a></li>
-<li><a href="http://www.infoq.com/news/2013/03/Docker">Docker: Automated and Consistent Software Deployments</a></li>
-</ul>
-
-
-<p>dotCloudはPaaSをやってる会社で、DockerはLXC(Linux Container)を使った実行環境管理ツールの様です。dotCloudの社内でも使われているものみたいですね。</p>
-
-<!-- more -->
-
-
-<h2>隔離環境</h2>
-
-<p>Pandlerでやりたかったことは、chrootで全く新しいroot filesystemを作ってそこにrpmを完璧に管理してインストールしプロセスを実行することだったんですが、DockerはLXCを使ってそれを実現してます。正確にはパッケージ管理の部分はLXCのイメージ？(実はLXC触ったことない。。。)にしてるのでDSL的な管理はできていないですが、実行環境をホストから隔離して実行するという意味では同じです。というか、Vagrant、ひいてはprivate cloud全般も同じ感じですね。</p>
-
-<p>実際、PaaS的なことをやろうと思うとなにがしかの方法で環境を隔離して管理しないといけなくて、Herokuもdynoという単位でVMを表現していますが、これもLXCの様です。</p>
-
-<p>Myrokuではもっと単純なアプローチで、LLの実行環境(処理系＋ライブラリ群)のみを固定化してプロセスを立ち上げればいいかなと思い、自作の<a href="https://github.com/riywo/ruby-llenv">llenv</a>を使って、LLの処理系およびLLのライブラリ群を1ディレクトリに入れて実行するという方式を取りました。ついでにそれをcapistranoで配布して、フロントのHTTPリバースプロキシと連携してポート番号を割り当てて、VirtualHostで出し分ける、みたいなところまでやりました。</p>
-
-<p>一方、Pandlerはchrootを使って固定化してみました。chrootの良い点は変なオーバヘッドなくシンプルに使えることと、IPアドレス始めリソースの配分を考える<strong>必要が無い</strong>ということだと思います。Pandlerは利用者にはchrootであることを意識しなくても実行できるような感じをイメージしていたので、そういう面倒事をなるべく排除したかったです(LXC詳しくないので実はそういうことやらなくて済む方法もあるのかも知れません)。あと、rootユーザじゃなくても実行できたらと思ってfakechrootとかも見てました。</p>
-
-<p>環境の隔離をもっとも素直にやるなら、今は各種仮想マシンを利用するのが手っ取り早いですね。XenやVMware、KVMにVirtualBox、果てはそれらをまとめて管理する環境(OpenStackとか)まで、もうすでにたくさんの選択肢がありますが、僕がやってきたようなやり方も環境隔離の一つのやり方だと思います。</p>
-
-<h2>なんで必要なの？</h2>
-
-<p>僕がどうしてここまでこの分野にこだわってるかというと、別にPaaSがやりたいわけではなくて、プロセスの実行環境(特にファイル資源)を出来る限りホストOSそれ自身から切り離したいからです。</p>
-
-<p>なぜ？それはOSのインストール自体＝Kernelを起動するまでと、アプリケーションを動かすレイヤを分けることで、様々なインフラ上で同じアプリケーションを動作させることができるようになるからです。（ただし僕の頭の中ではLinuxのことしか考えてません）</p>
-
-<p>様々なインフラとは、仮想マシンやパブリッククラウド、VPSやオンプレミスなサーバなどです。これらの間でOSおよびパッケージ群を完全に揃えることは大変に困難を極めます。それぞれの環境でサポートしているディストリやバージョンが違ったりしますし、諸々の理由で既にインストールされているものと衝突する場合もあります。ChefやPuppetなどの構成管理ツールでホストOSを管理する方法をとってもこれは解決しません。</p>
-
-<p>じゃあ、JVMの様にそれぞれの環境上にVMを入れてしまえばいいじゃない、つまり、どの環境であれとにかくKVMなりを使える様にしてしまえばイメージの使い回しができる、というのはまぁそのとおりなんですが、それじゃあどの環境も使うメリットがありません。オンプレミスを使いたい場面は大抵ハードウェアのスペックを使い切りたいわけですし、クラウドのサーバで仮想マシンを動かすのはなんかおかしいです(もちろんクラウド自身がそのイメージを使えればいいですが)。</p>
-
-<p>最近は、LLの処理系は**env的なツールを使って一般ユーザでビルドからやってしまえば、ホストOSに依存せずにどこでも同じ環境が再現できる！という意見も出てきそうですが、結局ホストOSに入っているライブラリ(libなんとかとか)は使っちゃうわけで、そのバージョンが違えば当然挙動が変わってしまいます。これは処理系だけじゃなくて、その後インストールするLL自身のパッケージも同様で、C拡張系のパッケージは激しくホストOSに依存しますので、BundlerやCartonを使った管理も100%完璧ではありません。</p>
-
-<p>僕が最近思ってるよさげな妥協点としては、Dockerの様にKernelは環境によって差異があるかもしれないけど、アプリケーションのファイル資源はホストOSとは完全に切り離されていて、libなんとかも全部自前で揃えている環境と必ずセットで管理するのがいいと思ってます。</p>
-
-<h2>Bundled application</h2>
-
-<p>ファイル資源をアプリケーションとセットにすることで、このファイルをコピーして実行するだけで、アプリケーションを簡単にどこでも再現できます。もちろんLXCを使うならLXCが使えるKernelじゃないとダメですが、逆にいうとそこさえクリアすればいいわけです。実際、DockerはEC2でも動くみたいです。</p>
-
-<p>で、こうすることでなにがいいのか？例えばあるサービスをEC2で始めたとして、成長に伴い次はVPS、最後はオンプレミスへと移行するというケースや、反対にオンプレミスのサービスの縮小に伴いEC2に移行したいといったケースで威力を発揮します。こうした移行は大抵ものすごい労力を伴います。ただでさえ開発に忙しいのに、コスト計算・比較もしなくちゃいけないし、いろんな他のシステム(DNSとかLBとか)も一式移さなきゃいけない。その上、移行したらOSのバージョン相違やライブラリの相違で動かなくなるかもしれない恐怖と戦うには、相当の体力が必要になります。実行環境がある程度切り離せていれば、そこまで苦もなく移せる可能性が高まります。</p>
-
-<p>また、開発環境と本番環境の差異も減らせます。開発環境は仮想マシン、本番環境はオンプレミスみたいなケースはよくあると思いますが、どうしてもいろんな差分が生まれてしまい、それを綺麗に揃えることに労力を割けるのはこれまた相当な体力がないと続きません。Bundledであれば、(もちろん設定ファイルとかは出し分けますが)一式同じライブラリで開発から本番に持っていくことができますし、テストもしやすくなります。</p>
-
-<p>Ops的にも利点があります。モニタリングに必要なツール一式をBundledできれば、それをとにかく配布すればどんな環境であれおなじ監視ツールがすぐ使える(cgroupsで他のプロセス見えないとかどうすんだろ)とか、アプリケーションがなんであれOSインストール時は自由に作ることができるから、その環境特有の設定や監視を統一的に管理できるとかもできそうです。例えばこのデータセンタはこのネットワークの設定が必要、みたいなのってアプリケーションからはなるべく切り離したいですよね。</p>
-
-<h2>DockerとかTravisとかMesos</h2>
-
-<p>で、まぁこういうことをそもそも既にやってるのがPaaSなんですが、中々その中の仕組みが実装レベルで外に出てくることはなかったので、Dockerはちょっと参考にしたいと思います。もしくは使ってみたい。</p>
-
-<p>あと、Travis CIみたいなテスト環境系も実は同じようなことをやっているなと思って、前に手元で動かしてみようと試みたことがあることを書いておきます。萎えてやめましたが。</p>
-
-<p>おまけで、MesosってのがLXCをもっと高度に抽象化して、クラスタで並べたnodeのmemoryとcpuリソースをアプリケーションに適切に配分するとかやってるみたいですが、詳しくは知りません。Twitterはガシガシ使っているそうです。</p>
-
-<ul>
-<li><a href="http://incubator.apache.org/mesos/">Apache Mesos: Dynamic Resource Sharing for Clusters</a></li>
-</ul>
-
-
-<h2>おわりに</h2>
-
-<p>Dockerが良さそうだなぁと思ったので、ここ最近考えてることを合わせて言語化しておきました。英語で書くには英語力が足りないのと誰にも読んでもらえないorz</p>
-
-<p>問題はこれが所詮POCで、こういうことを実際にやるモチベーションは特にないので、机上の空論感がとても強いこと。多少の環境の差異はなんとなく乗りきれちゃったりするしそもそも完璧に管理する必要ないことが多い。もしくは寿命ギリギリまで環境を出来る限り変えずにやり過ごすのが一番簡単なやり方なので、今頑張る必要なくて、そしてずっと頑張る必要がないような話題だったりもします。この辺はサービスのライフサイクルとかも絡めて話をしたいところです。</p>
-
-<p>ただ夢を見続けることはした方がいいのかなと思うのと、そもそもその夢間違ってるよってのも言って欲しくてとりあえず書きなぐっておきました。</p>
 ]]></content>
   </entry>
   

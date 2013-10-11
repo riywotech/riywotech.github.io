@@ -9,7 +9,8 @@
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="To understand development of Mesos Framework, I developed a simple useless framework example called msh. riywo/msh ">
+  <meta name="description" content="You may have used chown command to change the ownership of files or directories like below. $ ls -l file
+-rw-r--r-- 1 root root 675 2013-09-23 23:23 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +66,69 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/11/chown-with-users-default-group/">Chown With User&#8217;s Default Group</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-11T12:55:00-07:00" pubdate data-updated="true">Oct 11<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>You may have used <code>chown</code> command to change the ownership of files or directories like below.</p>
+
+<pre><code>$ ls -l file
+-rw-r--r--  1 root root  675 2013-09-23 23:23 file
+$ sudo chown foo file
+$ ls -l file
+-rw-r--r--  1 foo root  675 2013-09-23 23:23 file
+</code></pre>
+
+<p>But this is not good because group of <code>file</code> is still <code>root</code>. Most case, you want to set it the default(login) group of the user.</p>
+
+<pre><code>$ id foo
+uid=1010(foo) gid=1009(foo) groups=1009(foo)
+</code></pre>
+
+<p>In this case, you want to set it <code>foo</code>. For that, I used a command below.</p>
+
+<pre><code>$ chown foo:foo file
+$ ls -l file
+-rw-r--r--  1 foo foo  675 2013-09-23 23:23 file
+</code></pre>
+
+<p>Not bad. But you have to know the default group of the user. It is not always same as the user name.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/10/11/chown-with-users-default-group/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -575,47 +639,6 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/06/18/git-rollback/">Git Rollback</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-18T17:20:00-07:00" pubdate data-updated="true">Jun 18<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>One day, I wanted to rollback git repository to a previous commit with a new &ldquo;rollback&rdquo; commit because the wrong commits had already pushed to the master.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/06/18/git-rollback/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -631,6 +654,10 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/10/11/chown-with-users-default-group/">chown with user&#8217;s default group</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/29/mesos-tutorial-3/">mesos tutorial 3</a>
       </li>
     
@@ -644,10 +671,6 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
     
       <li class="post">
         <a href="/blog/2013/09/08/private-paas/">Private PaaS</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/09/05/my-github-trends-2013-09-05/">my github trends 2013-09-05</a>
       </li>
     
   </ul>

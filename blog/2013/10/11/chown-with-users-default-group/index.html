@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: shell - As a SW/Ops/DB Engineer</title>
+  <title>chown with user's default group - As a SW/Ops/DB Engineer</title>
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="Category: shell">
+  <meta name="description" content="You may have used chown command to change the ownership of files or directories like below. $ ls -l file
+-rw-r--r-- 1 root root 675 2013-09-23 23:23 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tech.riywo.comblog/categories/shell">
+  <link rel="canonical" href="http://tech.riywo.com/blog/2013/10/11/chown-with-users-default-group">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="As a SW/Ops/DB Engineer" type="application/atom+xml">
@@ -64,36 +65,130 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: Shell</h1>
+    
+      <h1 class="entry-title">Chown With User's Default Group</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-11T12:55:00-07:00" pubdate data-updated="true">Oct 11<span>th</span>, 2013</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content"><p>You may have used <code>chown</code> command to change the ownership of files or directories like below.</p>
 
-  
-  <h2>2013</h2>
+<pre><code>$ ls -l file
+-rw-r--r--  1 root root  675 2013-09-23 23:23 file
+$ sudo chown foo file
+$ ls -l file
+-rw-r--r--  1 foo root  675 2013-09-23 23:23 file
+</code></pre>
 
-<article>
-  
-<h1><a href="/blog/2013/04/19/yet-another-shell-script/">Yet Another shell script</a></h1>
-<time datetime="2013-04-19T14:54:00-07:00" pubdate><span class='month'>Apr</span> <span class='day'>19</span> <span class='year'>2013</span></time>
+<p>But this is not good because group of <code>file</code> is still <code>root</code>. Most case, you want to set it the default(login) group of the user.</p>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/shell/'>shell</a></span>
-</footer>
+<pre><code>$ id foo
+uid=1010(foo) gid=1009(foo) groups=1009(foo)
+</code></pre>
+
+<p>In this case, you want to set it <code>foo</code>. For that, I used a command below.</p>
+
+<pre><code>$ chown foo:foo file
+$ ls -l file
+-rw-r--r--  1 foo foo  675 2013-09-23 23:23 file
+</code></pre>
+
+<p>Not bad. But you have to know the default group of the user. It is not always same as the user name.</p>
+
+<!-- more -->
 
 
-</article>
+<p>So, here is the best way. Just add <code>:</code> after the user name.</p>
 
+<pre><code>$ sudo chown foo: file
+$ ls -l file
+-rw-r--r--  1 foo foo  675 2013-09-23 23:23 file
+</code></pre>
+
+<p>Wow! This is super easy. See also <code>man chmod</code></p>
+
+<pre><code>… If a colon but no group name follows the user name, that user is made the owner of the files and the group of the files is changed to that user's login group. …
+</code></pre>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">riywo</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-11T12:55:00-07:00" pubdate data-updated="true">Oct 11<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/linux/'>linux</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tech.riywo.com/blog/2013/10/11/chown-with-users-default-group/" data-via="riywo" data-counturl="http://tech.riywo.com/blog/2013/10/11/chown-with-users-default-group/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/09/29/mesos-tutorial-3/" title="Previous Post: mesos tutorial 3">&laquo; mesos tutorial 3</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -177,7 +272,10 @@
       var disqus_shortname = 'riywotech';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://tech.riywo.com/blog/2013/10/11/chown-with-users-default-group/';
+        var disqus_url = 'http://tech.riywo.com/blog/2013/10/11/chown-with-users-default-group/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

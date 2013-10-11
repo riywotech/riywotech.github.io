@@ -4,7 +4,7 @@
   <title><![CDATA[As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-09-29T11:44:02-07:00</updated>
+  <updated>2013-10-11T13:08:45-07:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -12,6 +12,52 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[chown with user's default group]]></title>
+    <link href="http://tech.riywo.com/blog/2013/10/11/chown-with-users-default-group/"/>
+    <updated>2013-10-11T12:55:00-07:00</updated>
+    <id>http://tech.riywo.com/blog/2013/10/11/chown-with-users-default-group</id>
+    <content type="html"><![CDATA[<p>You may have used <code>chown</code> command to change the ownership of files or directories like below.</p>
+
+<pre><code>$ ls -l file
+-rw-r--r--  1 root root  675 2013-09-23 23:23 file
+$ sudo chown foo file
+$ ls -l file
+-rw-r--r--  1 foo root  675 2013-09-23 23:23 file
+</code></pre>
+
+<p>But this is not good because group of <code>file</code> is still <code>root</code>. Most case, you want to set it the default(login) group of the user.</p>
+
+<pre><code>$ id foo
+uid=1010(foo) gid=1009(foo) groups=1009(foo)
+</code></pre>
+
+<p>In this case, you want to set it <code>foo</code>. For that, I used a command below.</p>
+
+<pre><code>$ chown foo:foo file
+$ ls -l file
+-rw-r--r--  1 foo foo  675 2013-09-23 23:23 file
+</code></pre>
+
+<p>Not bad. But you have to know the default group of the user. It is not always same as the user name.</p>
+
+<!-- more -->
+
+
+<p>So, here is the best way. Just add <code>:</code> after the user name.</p>
+
+<pre><code>$ sudo chown foo: file
+$ ls -l file
+-rw-r--r--  1 foo foo  675 2013-09-23 23:23 file
+</code></pre>
+
+<p>Wow! This is super easy. See also <code>man chmod</code></p>
+
+<pre><code>… If a colon but no group name follows the user name, that user is made the owner of the files and the group of the files is changed to that user's login group. …
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[mesos tutorial 3]]></title>
@@ -1357,48 +1403,6 @@ web3&gt; tail -F access_log | sed -e 's/^/web3 /' | nc mon 10000
 <h2>Conclusion</h2>
 
 <p>Let&rsquo;s try zabbix in your EC2 environment!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Programming languages I use recently]]></title>
-    <link href="http://tech.riywo.com/blog/2013/04/18/programming-languages-i-use-recently/"/>
-    <updated>2013-04-18T08:51:00-07:00</updated>
-    <id>http://tech.riywo.com/blog/2013/04/18/programming-languages-i-use-recently</id>
-    <content type="html"><![CDATA[<p>Here is a list of programming languages in which I write code.</p>
-
-<!-- more -->
-
-
-<h3>Java</h3>
-
-<p>for <a href="https://www.coursera.org/course/algs4partII">Algorithms, Part II | Coursera</a></p>
-
-<h3>C</h3>
-
-<p>for <a href="https://www.coursera.org/course/hwswinterface">The Hardware/Software Interface | Coursera</a></p>
-
-<h3>Objective-C</h3>
-
-<p>for <a href="https://itunes.apple.com/us/course/coding-together-developing/id593208016">Coding Together: Developing Apps for iPhone and iPad (Winter 2013) &ndash; Download Free Content from Stanford on iTunes</a></p>
-
-<h3>Python</h3>
-
-<p>for work</p>
-
-<h3>Perl</h3>
-
-<p>for work</p>
-
-<h3>Ruby</h3>
-
-<p>for work and fun</p>
-
-<h2>Conclusion</h2>
-
-<p>Comparing languages with each other is so interesting that I need more languages:)</p>
-
-<p>cf. <a href="http://weblog.riywo.com/todo">TODO</a></p>
 ]]></content>
   </entry>
   
