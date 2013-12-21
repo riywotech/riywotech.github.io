@@ -9,7 +9,8 @@
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="One day, I wanted to rollback git repository to a previous commit with a new &ldquo;rollback&rdquo; commit because the wrong commits had already &hellip;">
+  <meta name="description" content="CRuby builds a ruby binary and scripts with the absolute path hard corded. $ strings /Users/riywo/.rbenv/versions/1.9.3-p327/bin/ruby | grep rbenv
+/ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +66,62 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/22/ruby-build-enable-load-relative/">Ruby-build &#8211;enable-load-relative</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-22T09:27:00-07:00" pubdate data-updated="true">Jun 22<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>CRuby builds a ruby binary and scripts with the absolute path hard corded.</p>
+
+<pre><code>$ strings /Users/riywo/.rbenv/versions/1.9.3-p327/bin/ruby | grep rbenv
+/Users/riywo/.rbenv/versions/1.9.3-p327
+/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/site_ruby/1.9.1
+/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/site_ruby/1.9.1/x86_64-darwin12.2.0
+/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/site_ruby
+/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/vendor_ruby/1.9.1
+/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/vendor_ruby/1.9.1/x86_64-darwin12.2.0
+/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/vendor_ruby
+/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/1.9.1
+/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/1.9.1/x86_64-darwin12.2.0
+
+$ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
+#!/Users/riywo/.rbenv/versions/1.9.3-p327/bin/ruby 
+</code></pre>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/06/22/ruby-build-enable-load-relative/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -492,47 +549,6 @@ hoge
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/18/ec2-zabbix/">Ec2-zabbix - Setup Zabbix on EC2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-18T22:56:00-07:00" pubdate data-updated="true">Apr 18<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I created a small repository to setup zabbix server on EC2. You can try a zabbix server super easily.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/04/18/ec2-zabbix/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -550,6 +566,10 @@ hoge
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon/">Fluentd on Mesos + Docker + Marathon</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/10/11/chown-with-users-default-group/">chown with user&#8217;s default group</a>
       </li>
     
@@ -563,10 +583,6 @@ hoge
     
       <li class="post">
         <a href="/blog/2013/09/27/mesos-introduction-1/">mesos introduction 1</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/09/08/private-paas/">Private PaaS</a>
       </li>
     
   </ul>

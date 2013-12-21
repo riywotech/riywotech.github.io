@@ -9,8 +9,7 @@
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="You may have used chown command to change the ownership of files or directories like below. $ ls -l file
--rw-r--r-- 1 root root 675 2013-09-23 23:23 &hellip;">
+  <meta name="description" content="I just tried to run Fluentd instances on Mesos + Docker + Marathon in Vagrant boxes. Here is the sample repository. riywo/sample-fluentd-on-mesos- &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +65,56 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon/">Fluentd on Mesos + Docker + Marathon</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-20T17:13:00-08:00" pubdate data-updated="true">Dec 20<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I just tried to run Fluentd instances on Mesos + Docker + Marathon in Vagrant boxes. Here is the sample repository.</p>
+
+<ul>
+<li><a href="https://github.com/riywo/sample-fluentd-on-mesos-docker">riywo/sample-fluentd-on-mesos-docker</a></li>
+</ul>
+
+
+<p>The overview diagram:</p>
+
+<p><img src="https://cacoo.com/diagrams/9XIEXwoUNUvOOuZ2-AB7C1.png" alt="diagram" /></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -583,62 +632,6 @@ NoMethodError: undefined method `star' for #&lt;Bookmark:0x007ff40e45a7b8&gt;
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/06/22/ruby-build-enable-load-relative/">Ruby-build &#8211;enable-load-relative</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-22T09:27:00-07:00" pubdate data-updated="true">Jun 22<span>nd</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>CRuby builds a ruby binary and scripts with the absolute path hard corded.</p>
-
-<pre><code>$ strings /Users/riywo/.rbenv/versions/1.9.3-p327/bin/ruby | grep rbenv
-/Users/riywo/.rbenv/versions/1.9.3-p327
-/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/site_ruby/1.9.1
-/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/site_ruby/1.9.1/x86_64-darwin12.2.0
-/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/site_ruby
-/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/vendor_ruby/1.9.1
-/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/vendor_ruby/1.9.1/x86_64-darwin12.2.0
-/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/vendor_ruby
-/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/1.9.1
-/Users/riywo/.rbenv/versions/1.9.3-p327/lib/ruby/1.9.1/x86_64-darwin12.2.0
-
-$ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
-#!/Users/riywo/.rbenv/versions/1.9.3-p327/bin/ruby 
-</code></pre>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/06/22/ruby-build-enable-load-relative/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -654,6 +647,10 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon/">Fluentd on Mesos + Docker + Marathon</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/10/11/chown-with-users-default-group/">chown with user&#8217;s default group</a>
       </li>
     
@@ -667,10 +664,6 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
     
       <li class="post">
         <a href="/blog/2013/09/27/mesos-introduction-1/">mesos introduction 1</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/09/08/private-paas/">Private PaaS</a>
       </li>
     
   </ul>

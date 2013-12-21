@@ -4,7 +4,7 @@
   <title><![CDATA[Category: linux | As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-10-11T13:08:45-07:00</updated>
+  <updated>2013-12-20T21:23:36-08:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -12,6 +12,118 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Fluentd on Mesos + Docker + Marathon]]></title>
+    <link href="http://tech.riywo.com/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon/"/>
+    <updated>2013-12-20T17:13:00-08:00</updated>
+    <id>http://tech.riywo.com/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon</id>
+    <content type="html"><![CDATA[<p>I just tried to run Fluentd instances on Mesos + Docker + Marathon in Vagrant boxes. Here is the sample repository.</p>
+
+<ul>
+<li><a href="https://github.com/riywo/sample-fluentd-on-mesos-docker">riywo/sample-fluentd-on-mesos-docker</a></li>
+</ul>
+
+
+<p>The overview diagram:</p>
+
+<p><img src="https://cacoo.com/diagrams/9XIEXwoUNUvOOuZ2-AB7C1.png" alt="diagram" /></p>
+
+<!-- more-->
+
+
+<h2>How?</h2>
+
+<p>See the github README.md.</p>
+
+<h2>What?</h2>
+
+<h3>Fluentd</h3>
+
+<ul>
+<li><a href="http://fluentd.org/">Fluentd: Open Source Log Management</a></li>
+</ul>
+
+
+<p>Fluentd is one of log collector middleware. Most web companies in Japan use this for log collecting. td-agent is a package version of fluentd including ruby interpreter.</p>
+
+<p>Some uses want to spin up multiple fluentd workers across many physical servers because fluentd only use one cpu core. Mesos is the right software to manage such situation.</p>
+
+<h3>Mesos</h3>
+
+<ul>
+<li><a href="http://mesos.apache.org/">Apache Mesos</a></li>
+</ul>
+
+
+<p>Computer resource management software. You can combine many servers as a one &ldquo;virtual computer&rdquo; with Mesos. Mesos itself is just allocating resources, so you have to use frameworks to manage these resources.</p>
+
+<h3>Marathon</h3>
+
+<ul>
+<li><a href="https://github.com/mesosphere/marathon">mesosphere/marathon</a></li>
+</ul>
+
+
+<p>Marathon is a framework on Mesos, which is like &ldquo;upstart for virtual computer&rdquo;. Marathon makes sure the number of running tasks, so if one of Mesos slave goes down, Marathon starts new instances on other slaves.</p>
+
+<p>Marathon also manages port of instances. You can get the list of host:port of your applications just asking Marathon API; this is kind of service discovery.</p>
+
+<h3>Docker</h3>
+
+<ul>
+<li><a href="https://www.docker.io/">Homepage &ndash; Docker: the Linux container engine</a></li>
+</ul>
+
+
+<p>LXC manager. You don&rsquo;t have to take care of server environment any more. Just create a docker container and commit it. Then, you can run the application anywhere you want. This is very convenient for computer cluster like Mesos.</p>
+
+<p>Mesosphere provides a simple Mesos executor for docker. It runs docker container and bind ports, so you can connect containers from outside of the slave.</p>
+
+<h3>HAProxy</h3>
+
+<ul>
+<li><a href="http://haproxy.1wt.eu/">HAProxy &ndash; The Reliable, High Performance TCP/HTTP Load Balancer</a></li>
+</ul>
+
+
+<p>Fluentd has http input interface, so I connect them with HAProxy running on Docker. First getting the list of host:port from Marathon, then generating config file of HAProxy. If the list is updated, just restart the HAProxy container.</p>
+
+<h3>Elasticsearch, Kibana</h3>
+
+<ul>
+<li><a href="http://www.elasticsearch.org/">Open Source Distributed Real Time Search &amp; Analytics | Elasticsearch</a></li>
+<li><a href="http://www.elasticsearch.org/overview/kibana/">Kibana | Overview | Elasticsearch</a></li>
+</ul>
+
+
+<p>Elasticsearch and Kibana is one of the best combination of storing logs and visualizing them.</p>
+
+<p>Fluentd has pluggable input/output and there is Elasticsearch output plugin. I installed it in the fluentd docker image. Giving ES host:port to the container as environment variables, fluentd can connect the ES. I run ES and Kibana on Docker, too.</p>
+
+<h2>Conclusion</h2>
+
+<p>It was very interesting exercise for me. I&rsquo;d like to keep practicing Mesos, Docker, Marathon, Vagrant, whatever. I hope this sample helps you, too.</p>
+
+<p>BTW, there were so much trouble especially Vagrant integration. <code>/etc/hosts</code> file is very tricky. I&rsquo;d like to know more reasonable way to manage Vagrant hosts information…</p>
+
+<h2>References</h2>
+
+<ul>
+<li><a href="https://github.com/mesosphere/mesos-docker">mesosphere/mesos-docker</a></li>
+<li><a href="http://mesosphere.io/2013/09/26/docker-on-mesos/">Mesosphere · Docker on Mesos</a></li>
+<li><a href="http://techcrunch.com/2013/09/26/mesosphere-adds-docker-support-to-its-mesos-based-operating-system-for-the-data-center/">Mesosphere Adds Docker Support To Its Mesos-Based Operating System For The Data Center | TechCrunch</a></li>
+<li><a href="http://www.slideshare.net/AishFenton/mesos-docker">Mesos ♥ Docker</a>
+
+<ul>
+<li><a href="http://www.youtube.com/watch?v=2MmnggSmTJo">▶ Docker ♥ Mesos &ndash; YouTube</a></li>
+</ul>
+</li>
+<li><a href="http://typesafe.com/blog/play-framework-grid-deployment-with-mesos">Play Framework Grid Deployment with Mesos – Blog &ndash; Typesafe</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[chown with user's default group]]></title>
@@ -326,31 +438,6 @@ web3&gt; tail -F access_log | sed -e 's/^/web3 /' | nc mon 10000
 <p>You can monitor all web servers logs with a single web page.</p>
 
 <p>Enjoy!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[ec2-zabbix - setup zabbix on EC2]]></title>
-    <link href="http://tech.riywo.com/blog/2013/04/18/ec2-zabbix/"/>
-    <updated>2013-04-18T22:56:00-07:00</updated>
-    <id>http://tech.riywo.com/blog/2013/04/18/ec2-zabbix</id>
-    <content type="html"><![CDATA[<p>I created a small repository to setup zabbix server on EC2. You can try a zabbix server super easily.</p>
-
-<!-- more -->
-
-
-<ul>
-<li><a href="https://github.com/riywo/ec2-zabbix">riywo/ec2-zabbix · GitHub</a></li>
-</ul>
-
-
-<p>This is extremely simple because of <a href="http://www.vagrantup.com/">Vagrant</a>, <a href="http://berkshelf.com/">Berkshelf</a> and <a href="http://community.opscode.com/cookbooks">Opscode Community Cookbooks</a>.</p>
-
-<p>At first, I tried to use <a href="http://aws.amazon.com/opsworks/">AWS OpsWorks</a>, but it was not suitable for using the community cookbooks.</p>
-
-<h2>Conclusion</h2>
-
-<p>Let&rsquo;s try zabbix in your EC2 environment!</p>
 ]]></content>
   </entry>
   

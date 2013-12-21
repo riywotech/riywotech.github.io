@@ -1,0 +1,382 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Fluentd on Mesos + Docker + Marathon - As a SW/Ops/DB Engineer</title>
+  <meta name="author" content="riywo">
+
+  
+  <meta name="description" content="I just tried to run Fluentd instances on Mesos + Docker + Marathon in Vagrant boxes. Here is the sample repository. riywo/sample-fluentd-on-mesos- &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tech.riywo.com/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="As a SW/Ops/DB Engineer" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">As a SW/Ops/DB Engineer</a></h1>
+  
+    <h2>riywo's technology memo</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tech.riywo.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Fluentd on Mesos + Docker + Marathon</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-20T17:13:00-08:00" pubdate data-updated="true">Dec 20<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I just tried to run Fluentd instances on Mesos + Docker + Marathon in Vagrant boxes. Here is the sample repository.</p>
+
+<ul>
+<li><a href="https://github.com/riywo/sample-fluentd-on-mesos-docker">riywo/sample-fluentd-on-mesos-docker</a></li>
+</ul>
+
+
+<p>The overview diagram:</p>
+
+<p><img src="https://cacoo.com/diagrams/9XIEXwoUNUvOOuZ2-AB7C1.png" alt="diagram" /></p>
+
+<!-- more-->
+
+
+<h2>How?</h2>
+
+<p>See the github README.md.</p>
+
+<h2>What?</h2>
+
+<h3>Fluentd</h3>
+
+<ul>
+<li><a href="http://fluentd.org/">Fluentd: Open Source Log Management</a></li>
+</ul>
+
+
+<p>Fluentd is one of log collector middleware. Most web companies in Japan use this for log collecting. td-agent is a package version of fluentd including ruby interpreter.</p>
+
+<p>Some uses want to spin up multiple fluentd workers across many physical servers because fluentd only use one cpu core. Mesos is the right software to manage such situation.</p>
+
+<h3>Mesos</h3>
+
+<ul>
+<li><a href="http://mesos.apache.org/">Apache Mesos</a></li>
+</ul>
+
+
+<p>Computer resource management software. You can combine many servers as a one &ldquo;virtual computer&rdquo; with Mesos. Mesos itself is just allocating resources, so you have to use frameworks to manage these resources.</p>
+
+<h3>Marathon</h3>
+
+<ul>
+<li><a href="https://github.com/mesosphere/marathon">mesosphere/marathon</a></li>
+</ul>
+
+
+<p>Marathon is a framework on Mesos, which is like &ldquo;upstart for virtual computer&rdquo;. Marathon makes sure the number of running tasks, so if one of Mesos slave goes down, Marathon starts new instances on other slaves.</p>
+
+<p>Marathon also manages port of instances. You can get the list of host:port of your applications just asking Marathon API; this is kind of service discovery.</p>
+
+<h3>Docker</h3>
+
+<ul>
+<li><a href="https://www.docker.io/">Homepage &ndash; Docker: the Linux container engine</a></li>
+</ul>
+
+
+<p>LXC manager. You don&rsquo;t have to take care of server environment any more. Just create a docker container and commit it. Then, you can run the application anywhere you want. This is very convenient for computer cluster like Mesos.</p>
+
+<p>Mesosphere provides a simple Mesos executor for docker. It runs docker container and bind ports, so you can connect containers from outside of the slave.</p>
+
+<h3>HAProxy</h3>
+
+<ul>
+<li><a href="http://haproxy.1wt.eu/">HAProxy &ndash; The Reliable, High Performance TCP/HTTP Load Balancer</a></li>
+</ul>
+
+
+<p>Fluentd has http input interface, so I connect them with HAProxy running on Docker. First getting the list of host:port from Marathon, then generating config file of HAProxy. If the list is updated, just restart the HAProxy container.</p>
+
+<h3>Elasticsearch, Kibana</h3>
+
+<ul>
+<li><a href="http://www.elasticsearch.org/">Open Source Distributed Real Time Search &amp; Analytics | Elasticsearch</a></li>
+<li><a href="http://www.elasticsearch.org/overview/kibana/">Kibana | Overview | Elasticsearch</a></li>
+</ul>
+
+
+<p>Elasticsearch and Kibana is one of the best combination of storing logs and visualizing them.</p>
+
+<p>Fluentd has pluggable input/output and there is Elasticsearch output plugin. I installed it in the fluentd docker image. Giving ES host:port to the container as environment variables, fluentd can connect the ES. I run ES and Kibana on Docker, too.</p>
+
+<h2>Conclusion</h2>
+
+<p>It was very interesting exercise for me. I&rsquo;d like to keep practicing Mesos, Docker, Marathon, Vagrant, whatever. I hope this sample helps you, too.</p>
+
+<p>BTW, there were so much trouble especially Vagrant integration. <code>/etc/hosts</code> file is very tricky. I&rsquo;d like to know more reasonable way to manage Vagrant hosts information…</p>
+
+<h2>References</h2>
+
+<ul>
+<li><a href="https://github.com/mesosphere/mesos-docker">mesosphere/mesos-docker</a></li>
+<li><a href="http://mesosphere.io/2013/09/26/docker-on-mesos/">Mesosphere · Docker on Mesos</a></li>
+<li><a href="http://techcrunch.com/2013/09/26/mesosphere-adds-docker-support-to-its-mesos-based-operating-system-for-the-data-center/">Mesosphere Adds Docker Support To Its Mesos-Based Operating System For The Data Center | TechCrunch</a></li>
+<li><a href="http://www.slideshare.net/AishFenton/mesos-docker">Mesos ♥ Docker</a>
+
+<ul>
+<li><a href="http://www.youtube.com/watch?v=2MmnggSmTJo">▶ Docker ♥ Mesos &ndash; YouTube</a></li>
+</ul>
+</li>
+<li><a href="http://typesafe.com/blog/play-framework-grid-deployment-with-mesos">Play Framework Grid Deployment with Mesos – Blog &ndash; Typesafe</a></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">riywo</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-20T17:13:00-08:00" pubdate data-updated="true">Dec 20<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/docker/'>docker</a>, <a class='category' href='/blog/categories/fluentd/'>fluentd</a>, <a class='category' href='/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/categories/marathon/'>marathon</a>, <a class='category' href='/blog/categories/mesos/'>mesos</a>, <a class='category' href='/blog/categories/vagrant/'>vagrant</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tech.riywo.com/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon/" data-via="riywo" data-counturl="http://tech.riywo.com/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/10/11/chown-with-users-default-group/" title="Previous Post: chown with user's default group">&laquo; chown with user's default group</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon/">Fluentd on Mesos + Docker + Marathon</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/11/chown-with-users-default-group/">chown with user's default group</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/29/mesos-tutorial-3/">mesos tutorial 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/28/mesos-tutorial-2/">mesos tutorial 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/27/mesos-introduction-1/">mesos introduction 1</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/riywo">@riywo</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'riywo',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - riywo -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'riywotech';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://tech.riywo.com/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon/';
+        var disqus_url = 'http://tech.riywo.com/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

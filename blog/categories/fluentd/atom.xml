@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: marathon | As a SW/Ops/DB Engineer]]></title>
-  <link href="http://tech.riywo.com/blog/categories/marathon/atom.xml" rel="self"/>
+  <title><![CDATA[Category: fluentd | As a SW/Ops/DB Engineer]]></title>
+  <link href="http://tech.riywo.com/blog/categories/fluentd/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
   <updated>2013-12-20T21:23:36-08:00</updated>
   <id>http://tech.riywo.com/</id>
@@ -120,136 +120,6 @@
 </ul>
 </li>
 <li><a href="http://typesafe.com/blog/play-framework-grid-deployment-with-mesos">Play Framework Grid Deployment with Mesos – Blog &ndash; Typesafe</a></li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[mesos introduction 1]]></title>
-    <link href="http://tech.riywo.com/blog/2013/09/27/mesos-introduction-1/"/>
-    <updated>2013-09-27T00:53:00-07:00</updated>
-    <id>http://tech.riywo.com/blog/2013/09/27/mesos-introduction-1</id>
-    <content type="html"><![CDATA[<p>Today, Mesosphere released an important milestone. I really desired this integration.</p>
-
-<ul>
-<li><a href="http://mesosphere.io/2013/09/26/docker-on-mesos/">Mesosphere · Docker on Mesos</a></li>
-</ul>
-
-
-<p>Now, we can manage our &ldquo;Computers as an OS&rdquo;.</p>
-
-<ul>
-<li>Kernel
-
-<ul>
-<li><a href="http://mesos.apache.org/">Mesos</a></li>
-</ul>
-</li>
-<li>Process
-
-<ul>
-<li><a href="https://www.docker.io/">Docker</a></li>
-</ul>
-</li>
-<li>Init
-
-<ul>
-<li><a href="https://github.com/mesosphere/marathon">Marathon</a></li>
-</ul>
-</li>
-<li>Cron
-
-<ul>
-<li><a href="https://github.com/airbnb/chronos">Chronos</a></li>
-</ul>
-</li>
-</ul>
-
-
-<!-- more -->
-
-
-<p>I would like to learn this new generation &ldquo;OS&rdquo;, so I started to play with Mesos. Mesosphere is a great company and they built packages of Mesos and Marathon. Building Mesos and tools are most painful part of this ecosystem, but now we can super easily start to use Mesos and Marathon. Thanks, Mesosphere:)</p>
-
-<p>I use AWS for Mesos cluster. At first, I created a m1.small instance for a master of Mesos, Zookeeper and Marathon. I use EC2-Classic.</p>
-
-<ul>
-<li>AMI
-
-<ul>
-<li>Ubuntu Server 13.04</li>
-</ul>
-</li>
-<li>Security Group
-
-<ul>
-<li>From any src IP
-
-<ul>
-<li>22(ssh)</li>
-<li>2181(zk)</li>
-<li>5050(mesos master)</li>
-<li>5051(mesos slave)</li>
-<li>8080(marathon)</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-
-<p>And I set user-data as an initial setup script:</p>
-
-<pre><code>#!/bin/bash
-curl -fL https://raw.github.com/mesosphere/mesos-docker/master/bin/mesos-docker-setup | bash
-echo manual &gt;&gt; /etc/init/mesos-slave.conf
-reboot
-</code></pre>
-
-<p>After the instance is ready, you can access Mesos(5050) and Marathon(8080) from your browser. I associated an EIP to the master.</p>
-
-<p>Then, I requested 10 spot instances for slaves. Same type(m1.small), same AMI, same security group, and user-data:</p>
-
-<pre><code>#!/bin/bash
-curl -fL https://raw.github.com/mesosphere/mesos-docker/master/bin/mesos-docker-setup | bash
-echo manual &gt;&gt; /etc/init/mesos-master.conf
-echo manual &gt;&gt; /etc/init/marathon.conf
-echo manual &gt;&gt; /etc/init/zookeeper.conf
-echo 'zk://YOUR_MASTER_EIP:2181/mesos' &gt; /etc/mesos/zk
-reboot
-</code></pre>
-
-<p>After a while, you can see 10 slaves, 10 CPUs and 6GB Mem on your Mesos dashboard! Wow! This is your new &ldquo;OS&rdquo;!</p>
-
-<p>Now you can run ANY process using Mesosphere&rsquo;s Mesos, Marathon and Docker integration. Why don&rsquo;t you request Redis processes to your Marathon?</p>
-
-<pre><code>$ http POST http://YOUR_MASTER_EIP:8080/v1/apps/start \
-          id=multidis instances=2 mem=512 cpus=0.5 \
-          executor=/var/lib/mesos/executors/docker \
-          cmd='johncosta/redis'
-</code></pre>
-
-<p>This request will start 2 tasks and use 1 CPU and 1GB Mem. You can scale it very easily. Awesome…, awesome…</p>
-
-<h2>Next step</h2>
-
-<ul>
-<li>Build Chronos</li>
-<li>Run Chronos on Marathon</li>
-<li>Create Docker image and run it on Marathon</li>
-<li>Integration with <a href="https://github.com/coreos/etcd">etcd</a>, or something
-
-<ul>
-<li>Configuration of 12factor app</li>
-</ul>
-</li>
-<li>Integration with <a href="http://ceph.com/">Ceph</a> or other storage
-
-<ul>
-<li>For virtual storage</li>
-</ul>
-</li>
 </ul>
 
 ]]></content>
