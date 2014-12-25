@@ -4,7 +4,7 @@
   <title><![CDATA[Category: linux | As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-12-20T21:23:36-08:00</updated>
+  <updated>2014-12-26T01:21:17+09:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Fluentd on Mesos + Docker + Marathon]]></title>
     <link href="http://tech.riywo.com/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon/"/>
-    <updated>2013-12-20T17:13:00-08:00</updated>
+    <updated>2013-12-20T17:13:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon</id>
     <content type="html"><![CDATA[<p>I just tried to run Fluentd instances on Mesos + Docker + Marathon in Vagrant boxes. Here is the sample repository.</p>
 
@@ -72,7 +72,7 @@
 <h3>Docker</h3>
 
 <ul>
-<li><a href="https://www.docker.io/">Homepage &ndash; Docker: the Linux container engine</a></li>
+<li><a href="https://www.docker.io/">Homepage - Docker: the Linux container engine</a></li>
 </ul>
 
 
@@ -83,7 +83,7 @@
 <h3>HAProxy</h3>
 
 <ul>
-<li><a href="http://haproxy.1wt.eu/">HAProxy &ndash; The Reliable, High Performance TCP/HTTP Load Balancer</a></li>
+<li><a href="http://haproxy.1wt.eu/">HAProxy - The Reliable, High Performance TCP/HTTP Load Balancer</a></li>
 </ul>
 
 
@@ -116,10 +116,10 @@
 <li><a href="http://www.slideshare.net/AishFenton/mesos-docker">Mesos ♥ Docker</a>
 
 <ul>
-<li><a href="http://www.youtube.com/watch?v=2MmnggSmTJo">▶ Docker ♥ Mesos &ndash; YouTube</a></li>
+<li><a href="http://www.youtube.com/watch?v=2MmnggSmTJo">▶ Docker ♥ Mesos - YouTube</a></li>
 </ul>
 </li>
-<li><a href="http://typesafe.com/blog/play-framework-grid-deployment-with-mesos">Play Framework Grid Deployment with Mesos – Blog &ndash; Typesafe</a></li>
+<li><a href="http://typesafe.com/blog/play-framework-grid-deployment-with-mesos">Play Framework Grid Deployment with Mesos – Blog - Typesafe</a></li>
 </ul>
 
 ]]></content>
@@ -128,7 +128,7 @@
   <entry>
     <title type="html"><![CDATA[chown with user's default group]]></title>
     <link href="http://tech.riywo.com/blog/2013/10/11/chown-with-users-default-group/"/>
-    <updated>2013-10-11T12:55:00-07:00</updated>
+    <updated>2013-10-11T12:55:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/10/11/chown-with-users-default-group</id>
     <content type="html"><![CDATA[<p>You may have used <code>chown</code> command to change the ownership of files or directories like below.</p>
 
@@ -174,7 +174,7 @@ $ ls -l file
   <entry>
     <title type="html"><![CDATA[fcache - file cache for parallel processes]]></title>
     <link href="http://tech.riywo.com/blog/2013/05/10/fcache-file-cache-for-parallel-processes/"/>
-    <updated>2013-05-10T01:46:00-07:00</updated>
+    <updated>2013-05-10T01:46:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/05/10/fcache-file-cache-for-parallel-processes</id>
     <content type="html"><![CDATA[<p>以前からたまーにこういうのがあるとうれしいケースがあるなぁと思ってたので作りました。</p>
 
@@ -246,7 +246,7 @@ UserParameter=example.key[*],fcache 10 curl -s localhost | grep $1 | cut -f 2
   <entry>
     <title type="html"><![CDATA[mruby on MIPS in PQI Air Pen]]></title>
     <link href="http://tech.riywo.com/blog/2013/05/07/mruby-on-mips-in-pqi-air-pen/"/>
-    <updated>2013-05-07T07:40:00-07:00</updated>
+    <updated>2013-05-07T07:40:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/05/07/mruby-on-mips-in-pqi-air-pen</id>
     <content type="html"><![CDATA[<p>moyashi さんの記事を読んで以来、ずっと欲しかったPQI Airシリーズなんですが、USのAmazonでは売ってなかったり無駄に高かったりして二の足を踏んでました。ある日、郵便局を使うと数百円で荷物が送れることが分かったので、日本のAmazonで買って実家に発送して送ってもらうことでついにゲットしました。</p>
 
@@ -287,7 +287,7 @@ VCEI exceptions         : not available
 <p>やり方はmoyashiさんが紹介されているSourcery CodeBenchというツールチェインを使って静的リンクでコンパイルしただけです。楽チン。</p>
 
 <ul>
-<li><a href="http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/editions/lite-edition/">Sourcery CodeBench Lite Edition &ndash; Mentor Graphics</a></li>
+<li><a href="http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/editions/lite-edition/">Sourcery CodeBench Lite Edition - Mentor Graphics</a></li>
 </ul>
 
 
@@ -410,14 +410,14 @@ Thanks :)
   <entry>
     <title type="html"><![CDATA[webtail + ncat = simple log monitoring!]]></title>
     <link href="http://tech.riywo.com/blog/2013/04/23/webtail-plus-ncat-equals-simple-log-monitoring-slash/"/>
-    <updated>2013-04-23T18:58:00-07:00</updated>
+    <updated>2013-04-23T18:58:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/04/23/webtail-plus-ncat-equals-simple-log-monitoring-slash</id>
     <content type="html"><![CDATA[<p><a href="https://github.com/r7kamura/webtail">webtail</a> is a super simple log monitoring tool. You can monitor a log streaming on a server via your web browser.</p>
 
 <p>I wanted to monitor multi servers log, so I tried <code>ncat</code> in <code>mmap</code>. <code>ncat</code> supports multi sessions.</p>
 
 <ul>
-<li><a href="http://nmap.org/ncat/">Ncat &ndash; Netcat for the 21st Century</a></li>
+<li><a href="http://nmap.org/ncat/">Ncat - Netcat for the 21st Century</a></li>
 </ul>
 
 

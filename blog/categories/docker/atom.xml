@@ -4,7 +4,7 @@
   <title><![CDATA[Category: docker | As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/blog/categories/docker/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-12-20T21:23:36-08:00</updated>
+  <updated>2014-12-26T01:21:17+09:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Fluentd on Mesos + Docker + Marathon]]></title>
     <link href="http://tech.riywo.com/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon/"/>
-    <updated>2013-12-20T17:13:00-08:00</updated>
+    <updated>2013-12-20T17:13:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon</id>
     <content type="html"><![CDATA[<p>I just tried to run Fluentd instances on Mesos + Docker + Marathon in Vagrant boxes. Here is the sample repository.</p>
 
@@ -72,7 +72,7 @@
 <h3>Docker</h3>
 
 <ul>
-<li><a href="https://www.docker.io/">Homepage &ndash; Docker: the Linux container engine</a></li>
+<li><a href="https://www.docker.io/">Homepage - Docker: the Linux container engine</a></li>
 </ul>
 
 
@@ -83,7 +83,7 @@
 <h3>HAProxy</h3>
 
 <ul>
-<li><a href="http://haproxy.1wt.eu/">HAProxy &ndash; The Reliable, High Performance TCP/HTTP Load Balancer</a></li>
+<li><a href="http://haproxy.1wt.eu/">HAProxy - The Reliable, High Performance TCP/HTTP Load Balancer</a></li>
 </ul>
 
 
@@ -116,10 +116,10 @@
 <li><a href="http://www.slideshare.net/AishFenton/mesos-docker">Mesos ♥ Docker</a>
 
 <ul>
-<li><a href="http://www.youtube.com/watch?v=2MmnggSmTJo">▶ Docker ♥ Mesos &ndash; YouTube</a></li>
+<li><a href="http://www.youtube.com/watch?v=2MmnggSmTJo">▶ Docker ♥ Mesos - YouTube</a></li>
 </ul>
 </li>
-<li><a href="http://typesafe.com/blog/play-framework-grid-deployment-with-mesos">Play Framework Grid Deployment with Mesos – Blog &ndash; Typesafe</a></li>
+<li><a href="http://typesafe.com/blog/play-framework-grid-deployment-with-mesos">Play Framework Grid Deployment with Mesos – Blog - Typesafe</a></li>
 </ul>
 
 ]]></content>
@@ -128,7 +128,7 @@
   <entry>
     <title type="html"><![CDATA[mesos introduction 1]]></title>
     <link href="http://tech.riywo.com/blog/2013/09/27/mesos-introduction-1/"/>
-    <updated>2013-09-27T00:53:00-07:00</updated>
+    <updated>2013-09-27T00:53:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/09/27/mesos-introduction-1</id>
     <content type="html"><![CDATA[<p>Today, Mesosphere released an important milestone. I really desired this integration.</p>
 
@@ -258,7 +258,7 @@ reboot
   <entry>
     <title type="html"><![CDATA[Private PaaS]]></title>
     <link href="http://tech.riywo.com/blog/2013/09/08/private-paas/"/>
-    <updated>2013-09-08T02:24:00-07:00</updated>
+    <updated>2013-09-08T02:24:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/09/08/private-paas</id>
     <content type="html"><![CDATA[<p>作りたいなーと漠然と思ってるアイデア。自分用メモなので色々省略してますので、興味ある人がいれば詳しく話します。</p>
 

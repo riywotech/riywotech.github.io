@@ -4,7 +4,7 @@
   <title><![CDATA[Category: aws | As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/blog/categories/aws/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-12-20T21:23:36-08:00</updated>
+  <updated>2014-12-26T01:21:17+09:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -14,9 +14,469 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Terraform module for Mesos + Ceph cluster and Packer template]]></title>
+    <link href="http://tech.riywo.com/blog/2014/12/25/terraform-module-for-mesos-plus-ceph-cluster-and-packer-template/"/>
+    <updated>2014-12-25T23:13:16+09:00</updated>
+    <id>http://tech.riywo.com/blog/2014/12/25/terraform-module-for-mesos-plus-ceph-cluster-and-packer-template</id>
+    <content type="html"><![CDATA[<p><a href="https://github.com/riywo/mesos-ceph">riywo/mesos-ceph</a></p>
+
+<p>I&rsquo;ve just tried to use <a href="https://www.terraform.io">Terraform</a> and <a href="https://www.packer.io">Packer</a> to create a <a href="http://mesos.apache.org">Mesos</a> + <a href="http://ceph.com">Ceph</a> cluster in <a href="http://aws.amazon.com">AWS</a>. Yes, I know <a href="http://mesosphere.com">Mesosphere</a> applications supporting deployment of Mesos cluster in some IaaS (see <a href="http://mesosphere.com/docs/getting-started">Getting Started</a>), but I&rsquo;d like to understand what&rsquo;s going on there. So, I did it by Terraform and Packer. I&rsquo;m gonna explain a little bit more about this.</p>
+
+<p>Through this work, I&rsquo;ve learned a lot of things. I will write something below too.</p>
+
+<!-- more -->
+
+
+<h2>What is this?</h2>
+
+<p>This repository includes Terraform module and Packer template. Terraform module will manage a VPC subnet, igw, sg, etc. and instances below:</p>
+
+<ul>
+<li>admin
+
+<ul>
+<li>ssh gateway</li>
+<li>run <code>ceph-deploy</code></li>
+</ul>
+</li>
+<li>master1, master2, master3
+
+<ul>
+<li>mesos master</li>
+<li>marathon</li>
+<li>ceph mon</li>
+<li>ceph mds</li>
+<li>mount cephfs</li>
+</ul>
+</li>
+<li>slaves (default 3)
+
+<ul>
+<li>mesos slave</li>
+<li>ceph osd with EBS</li>
+<li>mount cephfs</li>
+</ul>
+</li>
+</ul>
+
+
+<p>Why not only Mesos, did I manage Ceph cluster? In Mesos, I&rsquo;d like to use a shared file system because:</p>
+
+<ul>
+<li>Share executer files, etc.</li>
+<li>Control cluster software on Mesos</li>
+<li>Save uploaded files to Mesos tasks (ex. image files to blog apps)</li>
+</ul>
+
+
+<p>Or just for fun :)</p>
+
+<h2>How to use?</h2>
+
+<p>Very simple, make your own terraform config like below:</p>
+
+<pre><code>provider "aws" {}
+
+resource "aws_vpc" "default" {
+        cidr_block           = "10.0.0.0/16"
+        enable_dns_support   = true
+        enable_dns_hostnames = true
+}
+
+module "mesos_ceph" {
+        source                   = "github.com/riywo/mesos-ceph/terraform"
+        vpc_id                   = "${aws_vpc.default.id}"
+        key_name                 = "${var.key_name}"
+        key_path                 = "${var.key_path}"
+        subnet_availability_zone = "us-east-1e"
+        subnet_cidr_block        = "10.0.1.0/24"
+        master1_ip               = "10.0.1.11"
+        master2_ip               = "10.0.1.12"
+        master3_ip               = "10.0.1.13"
+}
+</code></pre>
+
+<p>Note: You can use environment variables for AWS configuration and <code>terraform.tfvars</code> file for variables.</p>
+
+<pre><code>export AWS_REGION=us-east-1
+export AWS_ACCESS_KEY=AAAAAAAAAA
+export AWS_SECRET_KEY=000000000000000000
+
+$ cat terraform.tfvars
+key_name = "your key name"
+key_path = "/path/to/private_pem_file"
+</code></pre>
+
+<p>First, you should download the module using <code>terraform get</code></p>
+
+<pre><code>$ terraform get
+Get: git::https://github.com/riywo/mesos-ceph.git
+</code></pre>
+
+<p>Then, you can check <code>terraform plan</code>. To show resources in module, you have to provide <code>-module-depth</code> option.</p>
+
+<pre><code>$ terraform plan -module-depth -1
+Refreshing Terraform state prior to plan...
+
+
+The Terraform execution plan has been generated and is shown below.
+Resources are shown in alphabetical order for quick scanning. Green resources
+will be created (or destroyed and then created if an existing resource
+exists), yellow resources are being changed in-place, and red resources
+will be destroyed.
+
+Note: You didn't specify an "-out" parameter to save this plan, so when
+"apply" is called, Terraform can't guarantee this is what will execute.
+
++ aws_vpc.default
+    cidr_block:           "" =&gt; "10.0.0.0/16"
+    enable_dns_hostnames: "" =&gt; "1"
+    enable_dns_support:   "" =&gt; "1"
+    main_route_table_id:  "" =&gt; "&lt;computed&gt;"
+
++ module.mesos.aws_instance.admin
+    ami:               "" =&gt; "ami-06ef816e"
+    availability_zone: "" =&gt; "&lt;computed&gt;"
+    instance_type:     "" =&gt; "t2.micro"
+    key_name:          "" =&gt; "your key name"
+    private_dns:       "" =&gt; "&lt;computed&gt;"
+    private_ip:        "" =&gt; "&lt;computed&gt;"
+    public_dns:        "" =&gt; "&lt;computed&gt;"
+    public_ip:         "" =&gt; "&lt;computed&gt;"
+    security_groups.#: "" =&gt; "&lt;computed&gt;"
+    subnet_id:         "" =&gt; "${aws_subnet.public.id}"
+    tenancy:           "" =&gt; "&lt;computed&gt;"
+
++ module.mesos.aws_instance.master1
+    ami:               "" =&gt; "ami-06ef816e"
+    availability_zone: "" =&gt; "&lt;computed&gt;"
+    instance_type:     "" =&gt; "t2.micro"
+    key_name:          "" =&gt; "your key name"
+    private_dns:       "" =&gt; "&lt;computed&gt;"
+    private_ip:        "" =&gt; "10.0.1.11"
+    public_dns:        "" =&gt; "&lt;computed&gt;"
+    public_ip:         "" =&gt; "&lt;computed&gt;"
+    security_groups.#: "" =&gt; "&lt;computed&gt;"
+    subnet_id:         "" =&gt; "${aws_subnet.public.id}"
+    tenancy:           "" =&gt; "&lt;computed&gt;"
+
++ module.mesos.aws_instance.master2
+    ami:               "" =&gt; "ami-06ef816e"
+    availability_zone: "" =&gt; "&lt;computed&gt;"
+    instance_type:     "" =&gt; "t2.micro"
+    key_name:          "" =&gt; "your key name"
+    private_dns:       "" =&gt; "&lt;computed&gt;"
+    private_ip:        "" =&gt; "10.0.1.12"
+    public_dns:        "" =&gt; "&lt;computed&gt;"
+    public_ip:         "" =&gt; "&lt;computed&gt;"
+    security_groups.#: "" =&gt; "&lt;computed&gt;"
+    subnet_id:         "" =&gt; "${aws_subnet.public.id}"
+    tenancy:           "" =&gt; "&lt;computed&gt;"
+
++ module.mesos.aws_instance.master3
+    ami:               "" =&gt; "ami-06ef816e"
+    availability_zone: "" =&gt; "&lt;computed&gt;"
+    instance_type:     "" =&gt; "t2.micro"
+    key_name:          "" =&gt; "your key name"
+    private_dns:       "" =&gt; "&lt;computed&gt;"
+    private_ip:        "" =&gt; "10.0.1.13"
+    public_dns:        "" =&gt; "&lt;computed&gt;"
+    public_ip:         "" =&gt; "&lt;computed&gt;"
+    security_groups.#: "" =&gt; "&lt;computed&gt;"
+    subnet_id:         "" =&gt; "${aws_subnet.public.id}"
+    tenancy:           "" =&gt; "&lt;computed&gt;"
+
++ module.mesos.aws_instance.slaves.0
+    ami:                                  "" =&gt; "ami-06ef816e"
+    availability_zone:                    "" =&gt; "&lt;computed&gt;"
+    block_device.#:                       "" =&gt; "1"
+    block_device.0.delete_on_termination: "" =&gt; "1"
+    block_device.0.device_name:           "" =&gt; "/dev/sdb"
+    block_device.0.encrypted:             "" =&gt; ""
+    block_device.0.snapshot_id:           "" =&gt; ""
+    block_device.0.virtual_name:          "" =&gt; ""
+    block_device.0.volume_size:           "" =&gt; "30"
+    block_device.0.volume_type:           "" =&gt; ""
+    instance_type:                        "" =&gt; "t2.micro"
+    key_name:                             "" =&gt; "your key name"
+    private_dns:                          "" =&gt; "&lt;computed&gt;"
+    private_ip:                           "" =&gt; "&lt;computed&gt;"
+    public_dns:                           "" =&gt; "&lt;computed&gt;"
+    public_ip:                            "" =&gt; "&lt;computed&gt;"
+    security_groups.#:                    "" =&gt; "&lt;computed&gt;"
+    subnet_id:                            "" =&gt; "${aws_subnet.public.id}"
+    tenancy:                              "" =&gt; "&lt;computed&gt;"
+
++ module.mesos.aws_instance.slaves.1
+    ami:                                  "" =&gt; "ami-06ef816e"
+    availability_zone:                    "" =&gt; "&lt;computed&gt;"
+    block_device.#:                       "" =&gt; "1"
+    block_device.0.delete_on_termination: "" =&gt; "1"
+    block_device.0.device_name:           "" =&gt; "/dev/sdb"
+    block_device.0.encrypted:             "" =&gt; ""
+    block_device.0.snapshot_id:           "" =&gt; ""
+    block_device.0.virtual_name:          "" =&gt; ""
+    block_device.0.volume_size:           "" =&gt; "30"
+    block_device.0.volume_type:           "" =&gt; ""
+    instance_type:                        "" =&gt; "t2.micro"
+    key_name:                             "" =&gt; "your key name"
+    private_dns:                          "" =&gt; "&lt;computed&gt;"
+    private_ip:                           "" =&gt; "&lt;computed&gt;"
+    public_dns:                           "" =&gt; "&lt;computed&gt;"
+    public_ip:                            "" =&gt; "&lt;computed&gt;"
+    security_groups.#:                    "" =&gt; "&lt;computed&gt;"
+    subnet_id:                            "" =&gt; "${aws_subnet.public.id}"
+    tenancy:                              "" =&gt; "&lt;computed&gt;"
+
++ module.mesos.aws_instance.slaves.2
+    ami:                                  "" =&gt; "ami-06ef816e"
+    availability_zone:                    "" =&gt; "&lt;computed&gt;"
+    block_device.#:                       "" =&gt; "1"
+    block_device.0.delete_on_termination: "" =&gt; "1"
+    block_device.0.device_name:           "" =&gt; "/dev/sdb"
+    block_device.0.encrypted:             "" =&gt; ""
+    block_device.0.snapshot_id:           "" =&gt; ""
+    block_device.0.virtual_name:          "" =&gt; ""
+    block_device.0.volume_size:           "" =&gt; "30"
+    block_device.0.volume_type:           "" =&gt; ""
+    instance_type:                        "" =&gt; "t2.micro"
+    key_name:                             "" =&gt; "your key name"
+    private_dns:                          "" =&gt; "&lt;computed&gt;"
+    private_ip:                           "" =&gt; "&lt;computed&gt;"
+    public_dns:                           "" =&gt; "&lt;computed&gt;"
+    public_ip:                            "" =&gt; "&lt;computed&gt;"
+    security_groups.#:                    "" =&gt; "&lt;computed&gt;"
+    subnet_id:                            "" =&gt; "${aws_subnet.public.id}"
+    tenancy:                              "" =&gt; "&lt;computed&gt;"
+
++ module.mesos.aws_internet_gateway.public
+    vpc_id: "" =&gt; "${var.vpc_id}"
+
++ module.mesos.aws_route_table.public
+    route.#:             "" =&gt; "1"
+    route.0.cidr_block:  "" =&gt; "0.0.0.0/0"
+    route.0.gateway_id:  "" =&gt; "${aws_internet_gateway.public.id}"
+    route.0.instance_id: "" =&gt; ""
+    vpc_id:              "" =&gt; "${var.vpc_id}"
+
++ module.mesos.aws_route_table_association.public
+    route_table_id: "" =&gt; "${aws_route_table.public.id}"
+    subnet_id:      "" =&gt; "${aws_subnet.public.id}"
+
++ module.mesos.aws_security_group.maintenance
+    description:                 "" =&gt; "maintenance"
+    ingress.#:                   "" =&gt; "1"
+    ingress.0.cidr_blocks.#:     "" =&gt; "1"
+    ingress.0.cidr_blocks.0:     "" =&gt; "0.0.0.0/0"
+    ingress.0.from_port:         "" =&gt; "22"
+    ingress.0.protocol:          "" =&gt; "tcp"
+    ingress.0.security_groups.#: "" =&gt; "0"
+    ingress.0.self:              "" =&gt; "0"
+    ingress.0.to_port:           "" =&gt; "22"
+    name:                        "" =&gt; "maintenance"
+    owner_id:                    "" =&gt; "&lt;computed&gt;"
+    vpc_id:                      "" =&gt; "${var.vpc_id}"
+
++ module.mesos.aws_security_group.master
+    description:                 "" =&gt; "master"
+    ingress.#:                   "" =&gt; "2"
+    ingress.0.cidr_blocks.#:     "" =&gt; "1"
+    ingress.0.cidr_blocks.0:     "" =&gt; "0.0.0.0/0"
+    ingress.0.from_port:         "" =&gt; "8080"
+    ingress.0.protocol:          "" =&gt; "tcp"
+    ingress.0.security_groups.#: "" =&gt; "0"
+    ingress.0.self:              "" =&gt; "0"
+    ingress.0.to_port:           "" =&gt; "8080"
+    ingress.1.cidr_blocks.#:     "" =&gt; "1"
+    ingress.1.cidr_blocks.0:     "" =&gt; "0.0.0.0/0"
+    ingress.1.from_port:         "" =&gt; "5050"
+    ingress.1.protocol:          "" =&gt; "tcp"
+    ingress.1.security_groups.#: "" =&gt; "0"
+    ingress.1.self:              "" =&gt; "0"
+    ingress.1.to_port:           "" =&gt; "5050"
+    name:                        "" =&gt; "master"
+    owner_id:                    "" =&gt; "&lt;computed&gt;"
+    vpc_id:                      "" =&gt; "${var.vpc_id}"
+
++ module.mesos.aws_security_group.private
+    description:                 "" =&gt; "private"
+    ingress.#:                   "" =&gt; "3"
+    ingress.0.cidr_blocks.#:     "" =&gt; "0"
+    ingress.0.from_port:         "" =&gt; "0"
+    ingress.0.protocol:          "" =&gt; "udp"
+    ingress.0.security_groups.#: "" =&gt; "0"
+    ingress.0.self:              "" =&gt; "1"
+    ingress.0.to_port:           "" =&gt; "65535"
+    ingress.1.cidr_blocks.#:     "" =&gt; "0"
+    ingress.1.from_port:         "" =&gt; "-1"
+    ingress.1.protocol:          "" =&gt; "icmp"
+    ingress.1.security_groups.#: "" =&gt; "0"
+    ingress.1.self:              "" =&gt; "1"
+    ingress.1.to_port:           "" =&gt; "-1"
+    ingress.2.cidr_blocks.#:     "" =&gt; "0"
+    ingress.2.from_port:         "" =&gt; "0"
+    ingress.2.protocol:          "" =&gt; "tcp"
+    ingress.2.security_groups.#: "" =&gt; "0"
+    ingress.2.self:              "" =&gt; "1"
+    ingress.2.to_port:           "" =&gt; "65535"
+    name:                        "" =&gt; "private"
+    owner_id:                    "" =&gt; "&lt;computed&gt;"
+    vpc_id:                      "" =&gt; "${var.vpc_id}"
+
++ module.mesos.aws_security_group.slave
+    description:                 "" =&gt; "slave"
+    ingress.#:                   "" =&gt; "1"
+    ingress.0.cidr_blocks.#:     "" =&gt; "1"
+    ingress.0.cidr_blocks.0:     "" =&gt; "0.0.0.0/0"
+    ingress.0.from_port:         "" =&gt; "5051"
+    ingress.0.protocol:          "" =&gt; "tcp"
+    ingress.0.security_groups.#: "" =&gt; "0"
+    ingress.0.self:              "" =&gt; "0"
+    ingress.0.to_port:           "" =&gt; "5051"
+    name:                        "" =&gt; "slave"
+    owner_id:                    "" =&gt; "&lt;computed&gt;"
+    vpc_id:                      "" =&gt; "${var.vpc_id}"
+
++ module.mesos.aws_subnet.public
+    availability_zone:       "" =&gt; "us-east-1e"
+    cidr_block:              "" =&gt; "10.0.1.0/24"
+    map_public_ip_on_launch: "" =&gt; "1"
+    vpc_id:                  "" =&gt; "${var.vpc_id}"
+
++ module.mesos.null_resource.init_ceph
+</code></pre>
+
+<p>Now, you can do <code>terraform apply</code> and look into instances or Mesos/Marathon UI.</p>
+
+<h2>Inside Terraform module</h2>
+
+<p>There are a few techniques to avoid some difficulties in cluster management and more.</p>
+
+<h3>Ceph cluster initialization process</h3>
+
+<p>To start using Ceph cluster and Ceph FS, you have to run some procedures like this:</p>
+
+<ul>
+<li>Create <code>ceph.conf</code> for the cluster</li>
+<li>Deploy <code>ceph.conf</code> to <code>mon</code> servers, initialize each <code>mon</code> and gather keys generated on each servers</li>
+<li>Deploy keys to <code>osd</code> servers and initialize each <code>osd</code></li>
+<li>Deploy keys to <code>mds</code> servers and initialize each <code>mds</code></li>
+<li>Create data and metadata OSD pool</li>
+<li>Create Ceph FS using these pools</li>
+<li>Mount Ceph FS pointing <code>mon</code> servers</li>
+</ul>
+
+
+<p>Since they are too complicated and stateful, there is a big problem to manage Ceph cluster by Terraform or others.</p>
+
+<p><code>ceph-deploy</code> is a easy tool for these procedure, so I used it on the admin instance. But how can we run a initial procedure by Terraform?</p>
+
+<p><code>null_resource</code> is the best way. See <a href="https://github.com/riywo/mesos-ceph/blob/17807b073803d92430adcba28b5e784615de2f02/terraform/init_ceph.tf">terraform/init_ceph.tf</a></p>
+
+<p>After spinning up all instances, this resource runs provisioners to initialize Ceph cluster like above. Once created this virtual resource, this procedure won&rsquo;t be executed any more.</p>
+
+<h3>Ceph initializing and provisioning</h3>
+
+<p>Considering initializing process above, there are two types of resource creation; Initializing and provisioning.</p>
+
+<p>Initializing means the completely initial timing. At this time, each instance doesn&rsquo;t need to be provisioned because the cluster initialization process will do everything.</p>
+
+<p>Provisioning, on the other hand, means after the cluster is initialized. For example, when a master/slave/admin instance is terminated, Terraform tries to re-create the instance and this is provisioning. It is a little bit different process than initializing because the cluster already exists.</p>
+
+<p>See <a href="https://github.com/riywo/mesos-ceph/blob/17807b073803d92430adcba28b5e784615de2f02/terraform/scripts/init_master.sh">terraform/scripts/init_master.sh</a>. <code>if ceph_initialized;</code> block is for this problem. So, all instances can be terminated anytime even after a Ceph cluster is initialized. Try terminate a instance and <code>terraform apply</code>!</p>
+
+<h3>SSH gateway and provisioners</h3>
+
+<p>Terraform provisioners assume the instance can be connected by ssh directly. In this module, I don&rsquo;t open ssh port for cluster instances except admin instance, so it is a SSH gateway.</p>
+
+<p>If you configure <code>connection</code> block to the gateway instead of the actual instance, you can use provisioners, but they run on the gateway.</p>
+
+<p>So, I copy AWS key file into the admin instance to be able to login to other instances (there is not a way to use agent forward so far).</p>
+
+<p>For each instance provisioning, I upload script files prefixed by the instance id to prevent overwriting race condition. See <a href="https://github.com/riywo/mesos-ceph/blob/17807b073803d92430adcba28b5e784615de2f02/terraform/master1.tf">terraform/master1.tf</a>. <code>script_path</code> option for <code>connection</code> is undocumented so far, btw.</p>
+
+<h3>Master IP addresses</h3>
+
+<p>I want to fix master IP addresses because they are hardcoded anywhere. I tried Terraform variable as list of IP addresses, but so far it was impossible.</p>
+
+<p>Because of that, I fixed the number of masters and created each <code>aws_instance</code> resource.</p>
+
+<p>When the list variable feature is implemented, I will refactor these configuration.</p>
+
+<h3>Concatenate provisioner scripts</h3>
+
+<p>I use bash script for provisioners and there are a lot of common functions, so I wrote a shared script <a href="https://github.com/riywo/mesos-ceph/blob/17807b073803d92430adcba28b5e784615de2f02/terraform/scripts/header.sh">terraform/scripts/header.sh</a>.</p>
+
+<p>To run each provisioner correctly, this file must be concatenated. Also, an entry point <code>main</code> must be concatenated. So I did like this:</p>
+
+<pre><code>provisioner "remote-exec" {
+        inline = [
+            "echo main foo bar | cat header.sh init_foo.sh - | bash"
+        ]
+}
+</code></pre>
+
+<p>I think there are much better ways, though&hellip;</p>
+
+<h2>Isolation between Terraform and Packer</h2>
+
+<p>There is a philosophy:</p>
+
+<ul>
+<li>Packer
+
+<ul>
+<li>Install file resources from the Internet</li>
+</ul>
+</li>
+<li>Terraform
+
+<ul>
+<li>Install only runtime information, like IP address
+
+<ul>
+<li>Do not fetch file resources from the Internet</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<p>So, any <code>apt-get install</code> are done by Packer nor Terraform. This philosophy is like <a href="http://12factor.net/">The Twelve-Factor App</a>.</p>
+
+<h2>BTW, <code>awk</code> is great</h2>
+
+<p>I wanted a way to use the instance id built by Packer in Terraform automatically. I found that Packer has <code>-machine-readable</code> output option and it is CSV format. So, I started to write a processor script:</p>
+
+<ul>
+<li>Print the machine readable output as well as normal Packer output</li>
+<li>Write <code>ami.tf</code> file using the instance id built just now</li>
+</ul>
+
+
+<p>See <a href="https://github.com/riywo/mesos-ceph/blob/17807b073803d92430adcba28b5e784615de2f02/packer/process">packer/process</a>. This is my first <code>awk</code> executable script. <code>awk</code> was very nice in this case and I could find a lot of <code>awk</code> tips.</p>
+
+<h2>Understanding basystyle</h2>
+
+<p><a href="https://github.com/progrium/bashstyle">progrium/bashstyle</a></p>
+
+<p>To write complex shell script for Packer/Terraform, I read the bashstyle article above. I don&rsquo;t understand all of them, but there are tons of best practice.</p>
+
+<h1>Conclusion</h1>
+
+<p>It was fun!</p>
+
+<p>Hey, wait a moment&hellip; At the beginning, I just wanted to run many applications on Mesos using Docker, for example WordPress, MySQL Galera Cluster, etc. To implement them, I needed a shared file system, so I started to learn about Ceph which I had an eye on before. To deploy the cluster into AWS, I needed some orchestration software, then started to see Terraform, Packer to create AMI&hellip; Too long yak shaving it was ;(</p>
+
+<p>Now, let&rsquo;s start learning about Mesos/Marathon/Docker and many applications!</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[ec2-zabbix - setup zabbix on EC2]]></title>
     <link href="http://tech.riywo.com/blog/2013/04/18/ec2-zabbix/"/>
-    <updated>2013-04-18T22:56:00-07:00</updated>
+    <updated>2013-04-18T22:56:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/04/18/ec2-zabbix</id>
     <content type="html"><![CDATA[<p>I created a small repository to setup zabbix server on EC2. You can try a zabbix server super easily.</p>
 

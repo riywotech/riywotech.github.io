@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ruby | As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-12-20T21:23:36-08:00</updated>
+  <updated>2014-12-26T01:21:17+09:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[omniauth-openid with pow and nginx SSL termination]]></title>
     <link href="http://tech.riywo.com/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination/"/>
-    <updated>2013-08-24T16:14:00-07:00</updated>
+    <updated>2013-08-24T16:14:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination</id>
     <content type="html"><![CDATA[<p>I tried to use <code>omniauth-openid</code> with my new rails application. It worked when I developed using HTTP. After I started to develop with HTTPS, it failed. Finally I got the coolest workaround: <code>OmniAuth.config.full_host</code> and <code>X-Forwarded-Host/Port</code>.</p>
 
@@ -140,7 +140,7 @@ Error in parsing the OpenID auth request.
 <p>Then, I found another monkey patch for <code>Rack::Request</code>.</p>
 
 <ul>
-<li><a href="http://stackoverflow.com/questions/4051577/openid-for-rails-app-behind-apache/4331679#4331679">mod rewrite &ndash; OpenID for rails app behind Apache &ndash; Stack Overflow</a></li>
+<li><a href="http://stackoverflow.com/questions/4051577/openid-for-rails-app-behind-apache/4331679#4331679">mod rewrite - OpenID for rails app behind Apache - Stack Overflow</a></li>
 </ul>
 
 
@@ -200,7 +200,7 @@ end
   <entry>
     <title type="html"><![CDATA[Using columns of a intermediate table with ActiveRecord has_many association]]></title>
     <link href="http://tech.riywo.com/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/"/>
-    <updated>2013-06-22T09:51:00-07:00</updated>
+    <updated>2013-06-22T09:51:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association</id>
     <content type="html"><![CDATA[<p>I have n:m relation tables and want to use columns of the intermediate table.</p>
 
@@ -247,7 +247,7 @@ end
   <entry>
     <title type="html"><![CDATA[ruby-build --enable-load-relative]]></title>
     <link href="http://tech.riywo.com/blog/2013/06/22/ruby-build-enable-load-relative/"/>
-    <updated>2013-06-22T09:27:00-07:00</updated>
+    <updated>2013-06-22T09:27:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/06/22/ruby-build-enable-load-relative</id>
     <content type="html"><![CDATA[<p>CRuby builds a ruby binary and scripts with the absolute path hard corded.</p>
 
@@ -293,14 +293,14 @@ exec "$bindir/ruby" -x "$0" "$@"
   <entry>
     <title type="html"><![CDATA[webtail + ncat = simple log monitoring!]]></title>
     <link href="http://tech.riywo.com/blog/2013/04/23/webtail-plus-ncat-equals-simple-log-monitoring-slash/"/>
-    <updated>2013-04-23T18:58:00-07:00</updated>
+    <updated>2013-04-23T18:58:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/04/23/webtail-plus-ncat-equals-simple-log-monitoring-slash</id>
     <content type="html"><![CDATA[<p><a href="https://github.com/r7kamura/webtail">webtail</a> is a super simple log monitoring tool. You can monitor a log streaming on a server via your web browser.</p>
 
 <p>I wanted to monitor multi servers log, so I tried <code>ncat</code> in <code>mmap</code>. <code>ncat</code> supports multi sessions.</p>
 
 <ul>
-<li><a href="http://nmap.org/ncat/">Ncat &ndash; Netcat for the 21st Century</a></li>
+<li><a href="http://nmap.org/ncat/">Ncat - Netcat for the 21st Century</a></li>
 </ul>
 
 
@@ -327,7 +327,7 @@ web3&gt; tail -F access_log | sed -e 's/^/web3 /' | nc mon 10000
   <entry>
     <title type="html"><![CDATA[Yet Another shell script]]></title>
     <link href="http://tech.riywo.com/blog/2013/04/19/yet-another-shell-script/"/>
-    <updated>2013-04-19T14:54:00-07:00</updated>
+    <updated>2013-04-19T14:54:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/04/19/yet-another-shell-script</id>
     <content type="html"><![CDATA[<p>How about such an alternative shell script?</p>
 

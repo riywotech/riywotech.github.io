@@ -9,8 +9,7 @@
   <meta name="author" content="riywo">
 
   
-  <meta name="description" content="CRuby builds a ruby binary and scripts with the absolute path hard corded. $ strings /Users/riywo/.rbenv/versions/1.9.3-p327/bin/ruby | grep rbenv
-/ &hellip;">
+  <meta name="description" content="I have n:m relation tables and want to use columns of the intermediate table. activerecord (4.0.0.rc2) class User &lt; ActiveRecord::Base has_many : &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tech.riywo.com/blog/page/2">
+  <link rel="canonical" href="http://tech.riywo.com/posts/2">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="As a SW/Ops/DB Engineer" type="application/atom+xml">
@@ -39,7 +38,7 @@
   <header role="banner"><hgroup>
   <h1><a href="/">As a SW/Ops/DB Engineer</a></h1>
   
-    <h2>riywo's technology memo</h2>
+    <h2>riywo&#8217;s technology memo</h2>
   
 </hgroup>
 
@@ -49,7 +48,7 @@
   
 </ul>
   
-<form action="http://google.com/search" method="get">
+<form action="https://google.com/search" method="get">
   <fieldset role="search">
     <input type="hidden" name="q" value="site:tech.riywo.com" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
@@ -72,6 +71,69 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/">Using Columns of a Intermediate Table With ActiveRecord Has_many Association</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-22T09:51:00+09:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I have n:m relation tables and want to use columns of the intermediate table.</p>
+
+<pre><code>activerecord (4.0.0.rc2)
+
+class User &lt; ActiveRecord::Base
+  has_many :user_bookmarks
+  has_many :bookmarks, through: :user_bookmarks
+end
+
+class UserBookmark &lt; ActiveRecord::Base
+  belongs_to :user
+  belongs_to :bookmark
+  # has column "star"
+end
+
+class Bookmark &lt; ActiveRecord::Base
+  has_many :user_bookmarks
+  has_many :users, through: :user_bookmarks
+end
+
+&gt; User.first.bookmarks.first.star
+NoMethodError: undefined method `star' for #&lt;Bookmark:0x007ff40e45a7b8&gt;
+</code></pre>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/06/22/using-columns-of-a-intermediate-table-with-activerecord-has-many-association/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2013/06/22/ruby-build-enable-load-relative/">Ruby-build &#8211;enable-load-relative</a></h1>
     
     
@@ -88,7 +150,7 @@
   
 
 
-<time datetime="2013-06-22T09:27:00-07:00" pubdate data-updated="true">Jun 22<span>nd</span>, 2013</time>
+<time datetime="2013-06-22T09:27:00+09:00" pubdate data-updated="true"></time>
         
       </p>
     
@@ -144,7 +206,7 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
   
 
 
-<time datetime="2013-06-18T17:20:00-07:00" pubdate data-updated="true">Jun 18<span>th</span>, 2013</time>
+<time datetime="2013-06-18T17:20:00+09:00" pubdate data-updated="true"></time>
         
       </p>
     
@@ -185,7 +247,7 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
   
 
 
-<time datetime="2013-06-11T00:23:00-07:00" pubdate data-updated="true">Jun 11<span>th</span>, 2013</time>
+<time datetime="2013-06-11T00:23:00+09:00" pubdate data-updated="true"></time>
         
       </p>
     
@@ -231,7 +293,7 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
   
 
 
-<time datetime="2013-05-13T19:15:00-07:00" pubdate data-updated="true">May 13<span>th</span>, 2013</time>
+<time datetime="2013-05-13T19:15:00+09:00" pubdate data-updated="true"></time>
         
       </p>
     
@@ -241,7 +303,7 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
   <div class="entry-content"><p>これ読んで思ったこと。</p>
 
 <ul>
-<li><a href="http://d.hatena.ne.jp/mizchi/20130512/1368351397">プログラミングはそれ自体が目的であっていい &ndash; mizchi log</a></li>
+<li><a href="http://d.hatena.ne.jp/mizchi/20130512/1368351397">プログラミングはそれ自体が目的であっていい - mizchi log</a></li>
 </ul>
 
 
@@ -279,7 +341,7 @@ $ head -1  /Users/riywo/.rbenv/versions/1.9.3-p327/bin/gem
   
 
 
-<time datetime="2013-05-10T01:46:00-07:00" pubdate data-updated="true">May 10<span>th</span>, 2013</time>
+<time datetime="2013-05-10T01:46:00+09:00" pubdate data-updated="true"></time>
         
       </p>
     
@@ -339,7 +401,7 @@ hoge
   
 
 
-<time datetime="2013-05-07T21:57:00-07:00" pubdate data-updated="true">May 7<span>th</span>, 2013</time>
+<time datetime="2013-05-07T21:57:00+09:00" pubdate data-updated="true"></time>
         
       </p>
     
@@ -351,7 +413,7 @@ hoge
 <p>アプリ作りたいですよね、アプリ。今日なんか作れないかなーと思って妄想してました。昨日こういうアプリを見かけて、</p>
 
 <ul>
-<li><a href="http://veadardiary.blog29.fc2.com/blog-entry-4473.html">iOSデバイスを画面に重ね合わせるだけでファイルの送受信ができる『PutOn Mac』 &ndash; Macの手書き説明書</a></li>
+<li><a href="http://veadardiary.blog29.fc2.com/blog-entry-4473.html">iOSデバイスを画面に重ね合わせるだけでファイルの送受信ができる『PutOn Mac』 - Macの手書き説明書</a></li>
 </ul>
 
 
@@ -391,7 +453,7 @@ hoge
   
 
 
-<time datetime="2013-05-07T07:40:00-07:00" pubdate data-updated="true">May 7<span>th</span>, 2013</time>
+<time datetime="2013-05-07T07:40:00+09:00" pubdate data-updated="true"></time>
         
       </p>
     
@@ -440,7 +502,7 @@ hoge
   
 
 
-<time datetime="2013-04-23T18:58:00-07:00" pubdate data-updated="true">Apr 23<span>rd</span>, 2013</time>
+<time datetime="2013-04-23T18:58:00+09:00" pubdate data-updated="true"></time>
         
       </p>
     
@@ -452,7 +514,7 @@ hoge
 <p>I wanted to monitor multi servers log, so I tried <code>ncat</code> in <code>mmap</code>. <code>ncat</code> supports multi sessions.</p>
 
 <ul>
-<li><a href="http://nmap.org/ncat/">Ncat &ndash; Netcat for the 21st Century</a></li>
+<li><a href="http://nmap.org/ncat/">Ncat - Netcat for the 21st Century</a></li>
 </ul>
 
 
@@ -488,7 +550,7 @@ hoge
   
 
 
-<time datetime="2013-04-19T19:55:00-07:00" pubdate data-updated="true">Apr 19<span>th</span>, 2013</time>
+<time datetime="2013-04-19T19:55:00+09:00" pubdate data-updated="true"></time>
         
       </p>
     
@@ -508,54 +570,13 @@ hoge
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/19/yet-another-shell-script/">Yet Another Shell Script</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-19T14:54:00-07:00" pubdate data-updated="true">Apr 19<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>How about such an alternative shell script?</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/04/19/yet-another-shell-script/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
-      <a class="prev" href="/blog/page/3/">&larr; Older</a>
+      <a class="prev" href="3">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
-    <a class="next" href="/">Newer &rarr;</a>
+    <a class="next" href="1">Newer &rarr;</a>
     
   </div>
 </div>
@@ -564,6 +585,10 @@ hoge
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/12/25/terraform-module-for-mesos-plus-ceph-cluster-and-packer-template/">Terraform module for Mesos + Ceph cluster and Packer template</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/12/20/fluentd-on-mesos-plus-docker-plus-marathon/">Fluentd on Mesos + Docker + Marathon</a>
@@ -579,10 +604,6 @@ hoge
     
       <li class="post">
         <a href="/blog/2013/09/28/mesos-tutorial-2/">mesos tutorial 2</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/09/27/mesos-introduction-1/">mesos introduction 1</a>
       </li>
     
   </ul>
@@ -627,7 +648,7 @@ hoge
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - riywo -
+  Copyright &copy; 2014 - riywo -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

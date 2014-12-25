@@ -4,7 +4,7 @@
   <title><![CDATA[Category: openid | As a SW/Ops/DB Engineer]]></title>
   <link href="http://tech.riywo.com/blog/categories/openid/atom.xml" rel="self"/>
   <link href="http://tech.riywo.com/"/>
-  <updated>2013-12-20T21:23:36-08:00</updated>
+  <updated>2014-12-26T01:21:17+09:00</updated>
   <id>http://tech.riywo.com/</id>
   <author>
     <name><![CDATA[riywo]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[omniauth-openid with pow and nginx SSL termination]]></title>
     <link href="http://tech.riywo.com/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination/"/>
-    <updated>2013-08-24T16:14:00-07:00</updated>
+    <updated>2013-08-24T16:14:00+09:00</updated>
     <id>http://tech.riywo.com/blog/2013/08/24/omniauth-openid-with-pow-and-nginx-ssl-termination</id>
     <content type="html"><![CDATA[<p>I tried to use <code>omniauth-openid</code> with my new rails application. It worked when I developed using HTTP. After I started to develop with HTTPS, it failed. Finally I got the coolest workaround: <code>OmniAuth.config.full_host</code> and <code>X-Forwarded-Host/Port</code>.</p>
 
@@ -140,7 +140,7 @@ Error in parsing the OpenID auth request.
 <p>Then, I found another monkey patch for <code>Rack::Request</code>.</p>
 
 <ul>
-<li><a href="http://stackoverflow.com/questions/4051577/openid-for-rails-app-behind-apache/4331679#4331679">mod rewrite &ndash; OpenID for rails app behind Apache &ndash; Stack Overflow</a></li>
+<li><a href="http://stackoverflow.com/questions/4051577/openid-for-rails-app-behind-apache/4331679#4331679">mod rewrite - OpenID for rails app behind Apache - Stack Overflow</a></li>
 </ul>
 
 
